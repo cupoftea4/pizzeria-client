@@ -1,9 +1,12 @@
-# Welcome to pizzeria simulator
+# Welcome to Pizzeria Simulator
 
 ## Run
-
-```text
+First you need to install dependencies.
+```
 npm i
+```
+And then you can run your project locally.
+```
 npm run dev
 ```
 
