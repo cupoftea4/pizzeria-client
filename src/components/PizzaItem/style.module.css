@@ -1,0 +1,25 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font: 400 1.5rem 'Playpen Sans', sans-serif;
+}
+
+.root img {
+  border-radius: 4rem;
+}
+
+.root p {
+  font: 400 1.5rem 'Playpen Sans', sans-serif;
+}
+
+.root .info {
+  display: none;
+}
+
+.root .info:hover {
+  display: block;
+  z-index: 1;
+  position: absolute;
+}

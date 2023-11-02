@@ -1,30 +1,16 @@
 import { useEffect, useState } from 'react';
 import style from './style.module.css';
-import Arrow from '@/icons/ArrowIcon';
-
-type Pizza = {
-  id: number
-  name: string
-  url: string
-  time: number
-  toppings: string[]
-};
-
-function PizzaItem (pizza: Pizza) {
-  return (<div className={style.item}>
-            <img src={pizza.url} alt={pizza.name} />
-            <p> {pizza.name} </p>
-            <Arrow />
-          </div>);
-}
+import PizzaItem from '@/components/PizzaItem';
+import Button from '@/components/Button';
+import type { Pizza } from '@/services/types';
 
 const PizzaModal = () => {
-  const [data, setData] = useState<Pizza[]>([]);
+  const [pizzaArray, setPizzaArray] = useState<Pizza[]>([]);
 
   useEffect(() => {
     fetch('http://localhost:8080/config/menu')
       .then((response) => response.json())
-      .then((data) => setData(data as Pizza[]));
+      .then((pizzaArray) => setPizzaArray(pizzaArray as Pizza[]));
   }, []);
 
   return (
@@ -35,10 +21,11 @@ const PizzaModal = () => {
             <h1>Pizza menu</h1>
           </div>
           <div className={style.list}>
-            {data.map((item: Pizza) => (
-              <PizzaItem key={item.id} url={item.url} name={item.name} />
+            {pizzaArray.map((item: Pizza) => (
+              <PizzaItem key={item.id} pizza={item} />
             ))}
           </div>
+            <Button text="Accept" />
         </div>
       </div>
     </div>

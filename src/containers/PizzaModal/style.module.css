@@ -46,26 +46,3 @@
   width: 100%;
   padding-bottom: 1rem;
 }
-
-.root .item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-
-.root .button {
-  background-color: var(--button-background-color);
-  filter: drop-shadow(0 .25rem .25rem hsla(0, 0%, 0%, 0.25));
-}
-
-.root .button:hover {
-
-}
-
-.root .info {
-  display: none;
-  position: absolute;
-  font: 400 1.125rem 'Playpen Sans', sans-serif;
-}
