@@ -1,0 +1,7 @@
+:root {
+  --background-color: hsl(27, 37%, 48%);
+  --content-background-color: hsl(58, 100%, 94%);
+  --text-color: hsl(0, 0%, 0%);
+  --text-color-light: hsl(0, 0%, 48%);
+  --button-background-color: hsl(44, 100%, 72%);
+}

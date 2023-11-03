@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@400;500&display=swap');
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Playpen Sans", sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -14,6 +16,12 @@
   -webkit-text-size-adjust: 100%;
 }
 
-html, body {
-  min-height: 100%;
+html, body, #root {
+  min-height: 100vh;
+}
+
+@media screen and (max-height: 900px) {
+  html {
+    font-size: 14px;
+  } 
 }
