@@ -8,9 +8,19 @@ const callback = () => {
   console.log('You clicked me!');
 };
 
-const PizzaModal = () => {
+type OwnProps = {
+  checkedPizzasCallback?: (selectedPizza: Pizza[] | null) => void
+};
+
+const PizzaModal = (props: OwnProps) => {
   const [pizzaArray, setPizzaArray] = useState<Pizza[]>([]);
   const [selectedPizza, setSelectedPizza] = useState<Pizza[] | null>(null);
+
+  const { checkedPizzasCallback } = props;
+
+  useEffect(() => {
+    checkedPizzasCallback?.(selectedPizza);
+  }, [checkedPizzasCallback, selectedPizza]);
 
   function addPizzaToSelected(pizza: Pizza) {
     setSelectedPizza(selectedPizza ? [...selectedPizza, pizza] : [pizza]);
