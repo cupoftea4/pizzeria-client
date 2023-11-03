@@ -1,0 +1,38 @@
+.custom-select-container {
+  width: 200px;
+  font-family: Arial, sans-serif;
+  position: relative;
+}
+
+.custom-select-header {
+  border: 1px solid #ccc;
+  padding: 8px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  background-color: #fff;
+  border-radius: 4px;
+}
+
+.custom-select-options {
+  border: 1px solid #ccc;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+.custom-select-option {
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.custom-select-option:hover {
+  background-color: #f5f5f5;
+}

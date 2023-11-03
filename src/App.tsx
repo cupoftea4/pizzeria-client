@@ -1,29 +1,17 @@
-import { Link, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import ReactDocs from './containers/ReactDocs';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import Config from './containers/PizzaConfig/Config';
+import './styles/_variables.css';
+import './styles/_global.css';
 
 const App = () => {
   return (
     <>
       <Router>
-      <div>
-        {/* Navigation */}
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/about">About</Link>
-            </li>
-          </ul>
-        </nav>
-
         {/* Route definitions */}
         <Routes>
-          <Route path="/" element={<ReactDocs link='https://react.dev' />} />
+          <Route path="/" element={<Config/>} />
           <Route path="/about" element={<h1>Hey!</h1>} />
         </Routes>
-      </div>
     </Router>
     </>
   );
