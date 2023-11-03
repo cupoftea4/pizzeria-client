@@ -34,25 +34,25 @@ const PizzaModal = () => {
   return (
     <div className={style.root}>
       <div className={style.modal}>
-        <div className={style.content}>
-          <div className={style.header}>
-            <h1>Pizza menu</h1>
-          </div>
-          <div className={style.list}>
-            {pizzaArray.map((item: Pizza) => (
+        <div className={style.header}>
+          <h1>Pizza menu</h1>
+        </div>
+        <div className={style.list}>
+          {pizzaArray
+            .sort((p1, p2) => p1.name.length - p2.name.length)
+            .map((item: Pizza) => (
               <PizzaItem
               key={item.id}
               pizza={item}
               addPizzaToSelected={addPizzaToSelected}
               removePizzaFromSelected={removePizzaFromSelected}/>
             ))}
-          </div>
-          <div className={style.bottom}>
-            <Button text="Accept" callback={callback} />
-          </div>
+        </div>
+        <div className={style.bottom}>
+          <Button text="Accept" callback={callback} />
         </div>
       </div>
-    </div>
+  </div>
   );
 };
 
