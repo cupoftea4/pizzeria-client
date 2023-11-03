@@ -8,9 +8,13 @@ const PizzaModal = () => {
   const [pizzaArray, setPizzaArray] = useState<Pizza[]>([]);
 
   useEffect(() => {
-    fetch('http://localhost:8080/config/menu')
-      .then((response) => response.json())
-      .then((pizzaArray) => setPizzaArray(pizzaArray as Pizza[]));
+    try {
+      fetch('http://localhost:8080/config/menu')
+        .then((response) => response.json())
+        .then((pizzaArray) => setPizzaArray(pizzaArray as Pizza[]));
+    } catch (error) {
+      console.log(error);
+    }
   }, []);
 
   return (
@@ -25,7 +29,9 @@ const PizzaModal = () => {
               <PizzaItem key={item.id} pizza={item} />
             ))}
           </div>
+          <div className={style.bottom}>
             <Button text="Accept" />
+          </div>
         </div>
       </div>
     </div>

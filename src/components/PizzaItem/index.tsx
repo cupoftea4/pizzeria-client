@@ -10,10 +10,9 @@ const PizzaItem = (props: OwnProps) => {
   return (
     <div className={style.root}>
       <img src={props.pizza.url} alt={props.pizza.name} />
-      <p>
-        {props.pizza.name}
-      </p>
-      <ArrowIcon/>
+      <span className={style.text}>
+        {props.pizza.name}<ArrowIcon/>
+      </span>
     </div>
   );
 };

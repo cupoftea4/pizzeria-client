@@ -4,21 +4,30 @@
   align-items: center;
   justify-content: center;
   font: 400 1.5rem 'Playpen Sans', sans-serif;
+  color: var(--text-color);
+  padding: 1rem .2rem;
 }
 
 .root img {
-  border-radius: 4rem;
+  width: 8rem;
+  height: 8rem;
+  border-radius: 10rem;
+  
 }
 
-.root p {
-  font: 400 1.5rem 'Playpen Sans', sans-serif;
+.text {
+  max-width: 10.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
-.root .info {
+.info {
   display: none;
 }
 
-.root .info:hover {
+.info:hover {
   display: block;
   z-index: 1;
   position: absolute;

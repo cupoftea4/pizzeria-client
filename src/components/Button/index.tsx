@@ -7,9 +7,9 @@ type OwnProps = {
 const Button = (props: OwnProps) => {
   return (
     <button className={style.button}>
-      <span>
+      <p className={style['button-text']}>
         {props.text}
-      </span>
+      </p>
     </button>
   );
 };

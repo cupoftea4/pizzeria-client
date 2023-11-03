@@ -1,5 +1,6 @@
 import { Link, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import ReactDocs from './containers/ReactDocs';
+import PizzaModal from './containers/PizzaModal';
 
 const App = () => {
   return (
@@ -21,7 +22,8 @@ const App = () => {
         {/* Route definitions */}
         <Routes>
           <Route path="/" element={<ReactDocs link='https://react.dev' />} />
-          <Route path="/about" element={<h1>Hey!</h1>} />
+          {/* for testing purposes */}
+          <Route path="/about" element={<PizzaModal/>} />
         </Routes>
       </div>
     </Router>
