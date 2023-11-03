@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import style from './style.module.css';
-import PizzaItem from '@/components/PizzaItem';
-import Button from '@/components/Button';
+import PizzaItem from '@/containers/PizzaConfig/PizzaItem';
+import PrimaryButton from '@/components/PrimaryButton';
 import type { Pizza } from '@/services/types';
 
 function callback () {
@@ -49,7 +49,9 @@ const PizzaModal = () => {
             ))}
         </div>
         <div className={style.bottom}>
-          <Button text="Accept" callback={callback} />
+          <PrimaryButton onClick={callback}>
+            Accept
+          </PrimaryButton>
         </div>
       </div>
   </div>

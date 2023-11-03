@@ -1,7 +1,7 @@
 import { type FC, useState } from 'react';
 import ReactIcon from '@/icons/ReactIcon';
 import styles from './ReactDocs.module.css';
-import TestButton from '@/components/TestButton';
+import PrimaryButton from '@/components/PrimaryButton';
 
 type OwnProps = {
   link: string
@@ -18,9 +18,7 @@ const ReactDocs: FC<OwnProps> = ({ link }) => {
       <h1>Welcome to React</h1>
       <div className={styles.counter}>
         Count is {count}
-        <TestButton onClick={() => setCount((count) => count + 1)}>
-          Click me
-        </TestButton>
+        <PrimaryButton onClick={() => setCount((count) => count + 1)}> Click me </PrimaryButton>
       </div>
       <a href={link}>
         <span className={styles.link}>Here</span> you can find React docs
