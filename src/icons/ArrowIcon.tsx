@@ -1,6 +1,12 @@
-const ArrowIcon = () => {
+type OwnProps = {
+  className?: string
+};
+
+const ArrowIcon = (props: OwnProps) => {
   return (
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+    className={props.className}
+    width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0_59_16)">
         <path
           // eslint-disable-next-line max-len

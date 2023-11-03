@@ -4,15 +4,18 @@ import type { Pizza } from '@/services/types';
 
 type OwnProps = {
   pizza: Pizza
+  addPizzaToSelected: (pizza: Pizza) => void
+  removePizzaFromSelected: (pizza: Pizza) => void
 };
 
 const PizzaItem = (props: OwnProps) => {
   return (
     <div className={style.root}>
       <img src={props.pizza.url} alt={props.pizza.name} />
-      <span className={style.text}>
-        {props.pizza.name}<ArrowIcon/>
-      </span>
+      <div className={style.container}>
+        <p className={style.text}>{props.pizza.name}</p>
+        <ArrowIcon className={style['arrow-icon']}/>
+      </div>
     </div>
   );
 };

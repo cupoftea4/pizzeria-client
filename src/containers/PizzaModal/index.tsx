@@ -4,8 +4,22 @@ import PizzaItem from '@/components/PizzaItem';
 import Button from '@/components/Button';
 import type { Pizza } from '@/services/types';
 
+function callback () {
+  console.log('You clicked me!');
+}
+
 const PizzaModal = () => {
   const [pizzaArray, setPizzaArray] = useState<Pizza[]>([]);
+  // const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPizza, setSelectedPizza] = useState<Pizza[] | null>(null);
+
+  function addPizzaToSelected (pizza: Pizza) {
+    setSelectedPizza(selectedPizza ? [...selectedPizza, pizza] : [pizza]);
+  }
+
+  function removePizzaFromSelected (pizza: Pizza) {
+    setSelectedPizza(selectedPizza?.filter((item) => item.id !== pizza.id) ?? null);
+  }
 
   useEffect(() => {
     try {
@@ -26,11 +40,15 @@ const PizzaModal = () => {
           </div>
           <div className={style.list}>
             {pizzaArray.map((item: Pizza) => (
-              <PizzaItem key={item.id} pizza={item} />
+              <PizzaItem
+              key={item.id}
+              pizza={item}
+              addPizzaToSelected={addPizzaToSelected}
+              removePizzaFromSelected={removePizzaFromSelected}/>
             ))}
           </div>
           <div className={style.bottom}>
-            <Button text="Accept" />
+            <Button text="Accept" callback={callback} />
           </div>
         </div>
       </div>
