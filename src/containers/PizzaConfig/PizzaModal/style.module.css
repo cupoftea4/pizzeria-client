@@ -1,5 +1,5 @@
 .root {
-  height: 100%;
+  min-height: 100vh;
   color: var(--text-color);
   display: grid;
   place-items: center;

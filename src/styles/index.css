@@ -17,5 +17,11 @@
 }
 
 html, body, #root {
-  height: 100%;
+  min-height: 100vh;
+}
+
+@media screen and (max-height: 900px) {
+  html {
+    font-size: 14px;
+  } 
 }

@@ -34,15 +34,17 @@ const PizzaItem = (props: OwnProps) => {
 
   return (
     <div className={style.root}>
-      <img src={props.pizza.url} alt={props.pizza.name} onClick={handleClick} />
-      {isSelected
-        ? (
-          <div className={style.overlay} onClick={handleClick}>
-            <CheckIcon className={style['check-icon']} />
-          </div>
-          )
-        : null
-      }
+      <div className={style['top-overlay']}>
+        <img src={props.pizza.url} alt={props.pizza.name} onClick={handleClick} />
+        {isSelected
+          ? (
+            <div className={style.overlay} onClick={handleClick}>
+              <CheckIcon className={style['check-icon']} />
+            </div>
+            )
+          : null
+        }
+      </div>
       <div className={style.bottom}>
         <p className={style.text}>{props.pizza.name}</p>
         <div className={style['hover-overlay']} onMouseEnter={handleHover} onMouseLeave={handleLeave}>

@@ -10,6 +10,7 @@
   width: 7.5rem;
   aspect-ratio: 1/1;
   border-radius: 10rem;
+  cursor: pointer;
 }
 
 .bottom {
@@ -20,13 +21,13 @@
 }
 
 @media screen and (min-width: 486px) {
-  .container {
-    gap: 0.25rem;
+  .bottom {
+    gap: 0.5rem;
   }
 }
 
 .text {
-  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  font-size: 1rem;
   text-align: center;
 
   overflow: hidden;
@@ -49,16 +50,27 @@
 
 .tooltip {
   position: absolute;
-  bottom: 100%; /* Position it above the pizza name */
+  bottom: 100%;
   left: 50%;
   color: hsl(0, 0%, 48%);
-  transform: translateX(-50%); /* Center it horizontally */
-  background-color: hsl(57, 39%, 88%); /* adjust background as needed */
+  transform: translateX(-50%);
+  background-color: hsl(57, 39%, 88%);
   padding: 0.25rem 0.75rem;
   border-radius: 0.25rem;
   stroke-width: 1px;
   stroke: rgba(0, 0, 0, 0.1);
-  box-shadow: 0px 0.125rem 0.75rem hsla(0, 0%, 0%, 0.102); /* optional shadow */
+  box-shadow: 0px 0.125rem 0.75rem hsla(0, 0%, 0%, 0.102);
+  z-index: 100;
+  animation: tooltip 0.2s ease-in-out;
+}
+
+@keyframes tooltip {
+  0% {
+    transform: translateX(-50%) translateY(-0.5rem);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
 .hover-overlay:hover + .tooltip,
@@ -66,12 +78,26 @@
   display: block;
 }
 
+.top-overlay {
+  position: relative;
+}
+
 .overlay {
   position: absolute;
   background-color: hsla(0, 0%, 22%, 0.451);
   border-radius: 10rem;
-  width: 7rem;
-  height: 7rem;
+  inset: 0.25rem;
+  cursor: pointer;
+  animation: check 0.2s ease-in;
+}
+
+@keyframes check {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .check-icon {
