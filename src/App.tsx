@@ -1,7 +1,6 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import ReactDocs from './containers/ReactDocs';
 import PizzaModal from './containers/PizzaConfig/PizzaModal';
-import './styles/_global.css';
 import './styles/_variables.css';
 
 const App = () => {

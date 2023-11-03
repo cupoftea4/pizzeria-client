@@ -3,26 +3,26 @@
   flex-direction: column;
   align-items: center;
   color: var(--text-color);
-  padding: 1rem .2rem;
+  padding: 1rem 0.2rem;
 }
 
 .root img {
-  width: 7rem;
+  width: 7.5rem;
   aspect-ratio: 1/1;
   border-radius: 10rem;
 }
 
-.container {
+.bottom {
   display: flex;
   align-items: center;
   flex-grow: 1;
-  padding-inline: .75rem;
+  padding-inline: 0.75rem;
 }
 
 @media screen and (min-width: 486px) {
   .container {
-    gap: .25rem;
-  } 
+    gap: 0.25rem;
+  }
 }
 
 .text {
@@ -33,7 +33,7 @@
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2; /* number of lines to show */
-          line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 
@@ -42,12 +42,42 @@
   height: 1rem;
 }
 
-.info {
-  display: none;
+.hover-overlay {
+  position: relative;
+  display: inline-block;
 }
 
-.info:hover {
-  display: block;
-  z-index: 1;
+.tooltip {
   position: absolute;
+  bottom: 100%; /* Position it above the pizza name */
+  left: 50%;
+  color: hsl(0, 0%, 48%);
+  transform: translateX(-50%); /* Center it horizontally */
+  background-color: hsl(57, 39%, 88%); /* adjust background as needed */
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.25rem;
+  stroke-width: 1px;
+  stroke: rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 0.125rem 0.75rem hsla(0, 0%, 0%, 0.102); /* optional shadow */
+}
+
+.hover-overlay:hover + .tooltip,
+.tooltip:hover {
+  display: block;
+}
+
+.overlay {
+  position: absolute;
+  background-color: hsla(0, 0%, 22%, 0.451);
+  border-radius: 10rem;
+  width: 7rem;
+  height: 7rem;
+}
+
+.check-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  fill: hsl(42, 100%, 82%);
 }

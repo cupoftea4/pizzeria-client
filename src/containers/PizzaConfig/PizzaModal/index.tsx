@@ -4,31 +4,34 @@ import PizzaItem from '@/containers/PizzaConfig/PizzaItem';
 import PrimaryButton from '@/components/PrimaryButton';
 import type { Pizza } from '@/services/types';
 
-function callback () {
+const callback = () => {
   console.log('You clicked me!');
-}
+};
 
 const PizzaModal = () => {
   const [pizzaArray, setPizzaArray] = useState<Pizza[]>([]);
-  // const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPizza, setSelectedPizza] = useState<Pizza[] | null>(null);
 
-  function addPizzaToSelected (pizza: Pizza) {
+  function addPizzaToSelected(pizza: Pizza) {
     setSelectedPizza(selectedPizza ? [...selectedPizza, pizza] : [pizza]);
   }
 
-  function removePizzaFromSelected (pizza: Pizza) {
+  function removePizzaFromSelected(pizza: Pizza) {
     setSelectedPizza(selectedPizza?.filter((item) => item.id !== pizza.id) ?? null);
   }
 
-  useEffect(() => {
+  const getMenu = async () => {
     try {
-      fetch('http://localhost:8080/config/menu')
-        .then((response) => response.json())
-        .then((pizzaArray) => setPizzaArray(pizzaArray as Pizza[]));
+      const response = await fetch('http://localhost:8080/config/menu');
+      const pizzaArray = await response.json();
+      setPizzaArray(pizzaArray as Pizza[]);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  useEffect(() => {
+    getMenu();
   }, []);
 
   return (
@@ -42,10 +45,10 @@ const PizzaModal = () => {
             .sort((p1, p2) => p1.name.length - p2.name.length)
             .map((item: Pizza) => (
               <PizzaItem
-              key={item.id}
-              pizza={item}
-              addPizzaToSelected={addPizzaToSelected}
-              removePizzaFromSelected={removePizzaFromSelected}/>
+                key={item.id}
+                pizza={item}
+                addPizzaToSelected={addPizzaToSelected}
+                removePizzaFromSelected={removePizzaFromSelected} />
             ))}
         </div>
         <div className={style.bottom}>
@@ -54,7 +57,7 @@ const PizzaModal = () => {
           </PrimaryButton>
         </div>
       </div>
-  </div>
+    </div>
   );
 };
 
