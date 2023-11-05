@@ -1,5 +1,7 @@
-.root{
-  font-size: 0.95rem;
+
+
+.root input{
+  font-size: 0.75rem;
 }
 
 .label{
@@ -31,6 +33,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 2rem;
+  row-gap: 0.25rem;
 }
 
 .specialized-cooks-grid-cell {
@@ -38,11 +41,6 @@
   justify-content: space-between;
   align-items: center;
   gap: 0.25rem;
-}
-
-.specialized-cooks-grid-cell input, .universal-cooks-label input{
-  width: 4rem;
-  padding: 0.15rem 0;
 }
 
 .universal-cooks-label {

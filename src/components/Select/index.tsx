@@ -5,16 +5,18 @@ import DownArrow from '@/icons/DownArrowIcon';
 
 type OwnProps<T extends number | string> = {
   options: T[]
-  onSelect: (option: T) => void
+  selectedOptionState: [T, (selectedOption: T) => void]
+  // onSelect: (option: T) => void
 };
 
-const Select = <T extends number | string,>({ options, onSelect }: OwnProps<T>) => {
+const Select = <T extends number | string,>({ options, selectedOptionState }: OwnProps<T>) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<T>(options[0]!);
+  // const [selectedOption, setSelectedOption] = useState<T>(options[0]!);
+  const [selectedOption, setSelectedOption] = selectedOptionState;
 
   const handleOptionClick = (option: T) => {
     setSelectedOption(option);
-    onSelect(option);
+    setSelectedOption(option);
     setIsOpen(false);
   };
 

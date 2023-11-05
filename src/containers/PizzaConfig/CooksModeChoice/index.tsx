@@ -1,17 +1,21 @@
-import type { CooksMode } from '@/types/config';
+/* eslint-disable max-len */
+import type { CookingStage, CooksMode } from '@/types/config';
 import style from './style.module.css';
 import Input from '@/components/Input';
-import { useRef } from 'react';
 
 type OwnProps = {
-  cooksMode: CooksMode
-  onCooksModeChange: (cooksMode: CooksMode) => void
+  cooksModeState: [CooksMode, (cooksMode: CooksMode) => void]
+  cooksNumberState: [number, (cooksNumber: number) => void]
+  cooksNumberPerStageState: [Record<CookingStage, number>, (cooksNumberPerStage: Record<CookingStage, number>) => void]
 };
 
-const CooksModeChoice = ({ cooksMode, onCooksModeChange }: OwnProps) => {
-  const cooksNumber = useRef<number>();
+const CooksModeChoice = ({ cooksModeState, cooksNumberState, cooksNumberPerStageState }: OwnProps) => {
+  const [cooksMode, setCooksMode] = cooksModeState;
+  const [cooksNumber, setCooksNumber] = cooksNumberState;
+  const [cooksNumberPerStage, setCooksNumberPerStage] = cooksNumberPerStageState;
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onCooksModeChange(event.target.value as CooksMode);
+    setCooksMode(event.target.value as CooksMode);
   };
 
   return (
@@ -33,25 +37,37 @@ const CooksModeChoice = ({ cooksMode, onCooksModeChange }: OwnProps) => {
               <label>
                 In topping
               </label>
-              <Input value={cooksNumber} />
+              <Input
+                value={cooksNumberPerStage.Topping}
+                setValue={val => { setCooksNumberPerStage({ ...cooksNumberPerStage, Topping: val }); } }
+              />
             </div>
             <div className={style['specialized-cooks-grid-cell']}>
               <label>
                 In dough
               </label>
-              <Input value={cooksNumber} />
+              <Input
+                value={cooksNumberPerStage.Dough}
+                setValue={val => { setCooksNumberPerStage({ ...cooksNumberPerStage, Dough: val }); } }
+              />
             </div>
             <div className={style['specialized-cooks-grid-cell']}>
               <label>
-                In backing
+                In baking
               </label>
-              <Input value={cooksNumber} />
+              <Input
+                value={cooksNumberPerStage.Baking}
+                setValue={val => { setCooksNumberPerStage({ ...cooksNumberPerStage, Baking: val }); } }
+              />
             </div>
             <div className={style['specialized-cooks-grid-cell']}>
               <label>
                 In packaging
               </label>
-              <Input value={cooksNumber} />
+              <Input
+                value={cooksNumberPerStage.Packaging}
+                setValue={val => { setCooksNumberPerStage({ ...cooksNumberPerStage, Packaging: val }); } }
+              />
             </div>
           </div>
         }
@@ -71,7 +87,7 @@ const CooksModeChoice = ({ cooksMode, onCooksModeChange }: OwnProps) => {
             <label>
               Number of cooks
             </label>
-            <Input value={cooksNumber} />
+            <Input value={cooksNumber} setValue={setCooksNumber} />
           </div>
         }
     </div>

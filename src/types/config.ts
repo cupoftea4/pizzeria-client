@@ -6,7 +6,7 @@ export type ConfigData = {
   cashRegisterQuantity: number
   cooksNumber: number
   cooksPerStage: Record<CookingStage, number>
-  dinersArrivalConfig: {
+  dinerArrivalConfig: {
     frequency: Frequency
     quantity: number
   }

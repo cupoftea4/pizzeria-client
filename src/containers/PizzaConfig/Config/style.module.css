@@ -3,7 +3,7 @@
   color: var(--text-color);
   display: grid;
   place-items: center;
-  font-size: 0.75rem;
+  font-size: 1rem;
   background-color: var(--background-color);
 }
 
@@ -28,7 +28,10 @@
 .form {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  grid-gap: 0.35rem;
+  grid-auto-rows: fit-content;
+  
+  /* grid-gap: 0.125rem; */
+  height: min-content;
   flex: 1;
   align-items: center;
 }
