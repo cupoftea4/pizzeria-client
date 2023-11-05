@@ -1,3 +1,53 @@
+.root{
+  font-size: 0.95rem;
+}
+
 .label{
-  display: block;
+  display: flex;
+  align-items: center;
+}
+
+.radioButton-input {
+  visibility: hidden;
+}
+
+.radioButton-custom{
+  margin-right: 1rem;
+  height: 1.25rem;
+  width: 1.25rem;
+  border-radius: 50%;
+  cursor: pointer;
+  background-color: hsl(0, 0%, 89%);
+  border: 2px solid black;
+  display: inline-block;
+}
+
+.radioButton-input:checked + span {
+  background-color: hsl(104, 22%, 49%);
+}
+
+.specialized-cooks-grid {
+  padding-left: 3rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 2rem;
+}
+
+.specialized-cooks-grid-cell {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.specialized-cooks-grid-cell input, .universal-cooks-label input{
+  width: 4rem;
+  padding: 0.15rem 0;
+}
+
+.universal-cooks-label {
+  padding-left: 3rem;
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
 }

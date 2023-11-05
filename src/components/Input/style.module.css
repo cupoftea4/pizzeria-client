@@ -1,7 +1,7 @@
 .root {
-    width: 5.625rem;
-    background-color: hsl(6, 41%, 70%);
-    border: 2px solid hsl(0, 0%, 34%);
-    border-radius: 1rem;
-    padding: 0.25rem 0.5rem;
+  width: 4rem;/*5.625*/
+  background-color: hsl(19, 48%, 79%);
+  border: 2px solid var(--border-color);
+  border-radius: 1rem;
+  padding: 0.1rem 0.5rem;
 }

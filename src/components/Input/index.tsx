@@ -1,16 +1,17 @@
 import style from './style.module.css';
 
 type OwnProps = {
-  value: React.MutableRefObject<number | undefined>
+  value: number
+  setValue: (val: number) => void
   className?: string
 };
 
-const Input = ({ value, className }: OwnProps) => {
+const Input = ({ value, setValue, className }: OwnProps) => {
   return (
     <input
       className={`${style.root} ${className}`}
-      value={value.current}
-      onChange={(e) => { value.current = +e.target.value; }}
+      value={value}
+      onChange={(e) => { setValue(+e.target.value); }}
       type='number'
     />
   );
