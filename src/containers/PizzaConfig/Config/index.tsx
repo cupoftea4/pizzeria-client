@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import PrimaryButton from '@/components/PrimaryButton';
 import style from './style.module.css';
 import { useCallback, useEffect, useState } from 'react';
@@ -61,7 +60,12 @@ const Config = () => {
         Topping: cooksNumberPerStage.Topping
       },
       cooksNumber: cooksMode === ('specialized' as CooksMode)
-        ? (cooksNumberPerStage.Packaging + cooksNumberPerStage.Dough + cooksNumberPerStage.Baking + cooksNumberPerStage.Topping)
+        ? (
+            cooksNumberPerStage.Packaging +
+            cooksNumberPerStage.Dough +
+            cooksNumberPerStage.Baking +
+            cooksNumberPerStage.Topping
+          )
         : cooksNumber
     };
 
@@ -103,7 +107,10 @@ const Config = () => {
           <label className={style.label}>
             Frequency of diner arrival
           </label>
-          <Select options={['Low', 'Medium', 'High']} selectedOptionState={[dinersArrivalFrequency, setDinersArrivalFrequency]} />
+          <Select
+            options={['Low', 'Medium', 'High']}
+            selectedOptionState={[dinersArrivalFrequency, setDinersArrivalFrequency]}
+          />
           <label className={style.label}>
             The number of diners per arrival
           </label>

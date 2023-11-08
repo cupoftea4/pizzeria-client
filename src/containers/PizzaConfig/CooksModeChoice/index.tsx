@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import type { CookingStage, CooksMode } from '@/types/config';
 import style from './style.module.css';
 import Input from '@/components/Input';
