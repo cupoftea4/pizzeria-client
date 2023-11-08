@@ -69,7 +69,6 @@ const Config = () => {
         : cooksNumber
     };
 
-    console.log(data);
     try {
       const response = await fetch('http://localhost:8080/config', {
         method: 'PUT',
