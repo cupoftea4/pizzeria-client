@@ -1,5 +1,5 @@
 .root {
-  width: 4rem;/*5.625*/
+  max-width: 4rem;
   background-color: hsl(19, 48%, 79%);
   border: 2px solid var(--border-color);
   border-radius: 1rem;

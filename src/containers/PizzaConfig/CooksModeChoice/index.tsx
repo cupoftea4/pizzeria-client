@@ -20,18 +20,19 @@ const CooksModeChoice = ({ cooksModeState, cooksNumberState, cooksNumberPerStage
 
   return (
     <div className={style.root}>
-      <label className={style.label}>
-        <input
-          className={style['radioButton-input']}
-          type="radio"
-          value="specialized"
-          checked={cooksMode === 'specialized'}
-          onChange={handleChange}
-        />
-        <span className={style['radioButton-custom']}></span>
-        The cooks are specialized
-      </label>
-      {cooksMode === 'specialized' &&
+      <div>
+        <label className={style.label}>
+          <input
+            className={style['radioButton-input']}
+            type="radio"
+            value="specialized"
+            checked={cooksMode === 'specialized'}
+            onChange={handleChange}
+          />
+          <span className={style['radioButton-custom']}></span>
+          The cooks are specialized
+        </label>
+        {cooksMode === 'specialized' &&
           <div className={style['specialized-cooks-grid']}>
             <div className={style['specialized-cooks-grid-cell']}>
               <label>
@@ -71,25 +72,28 @@ const CooksModeChoice = ({ cooksModeState, cooksNumberState, cooksNumberPerStage
             </div>
           </div>
         }
-      <label className={style.label}>
-        <input
-          className={style['radioButton-input']}
-          type="radio"
-          value="universal"
-          checked={cooksMode === 'universal'}
-          onChange={handleChange}
-        />
-        <span className={style['radioButton-custom']}></span>
-        The cooks are universal
-      </label>
-      {cooksMode === 'universal' &&
-          <div className={style['universal-cooks-label']}>
-            <label>
-              Number of cooks
-            </label>
-            <Input value={cooksNumber} setValue={setCooksNumber} />
-          </div>
-        }
+      </div>
+      <div>
+        <label className={style.label}>
+          <input
+            className={style['radioButton-input']}
+            type="radio"
+            value="universal"
+            checked={cooksMode === 'universal'}
+            onChange={handleChange}
+          />
+          <span className={style['radioButton-custom']}></span>
+          The cooks are universal
+        </label>
+        {cooksMode === 'universal' &&
+            <div className={style['universal-cooks-label']}>
+              <label>
+                Number of cooks
+              </label>
+              <Input value={cooksNumber} setValue={setCooksNumber} />
+            </div>
+          }
+      </div>
     </div>
   );
 };

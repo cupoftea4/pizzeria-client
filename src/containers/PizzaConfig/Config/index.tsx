@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import PrimaryButton from '@/components/PrimaryButton';
 import style from './style.module.css';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Input from '@/components/Input';
 import CooksModeChoice from '../CooksModeChoice';
 import Select from '@/components/Select';
@@ -23,13 +23,12 @@ const Config = () => {
     Packaging: 0
   });
 
-  const getConfig = async () => {
+  const getConfig = useCallback(async () => {
     const res = await fetch('http://localhost:8080/config');
     const resJson = await res.json() as ConfigData;
     setCashRegistersNumber(resJson.cashRegisterQuantity);
     setCooksNumber(resJson.cooksNumber);
     setCooksNumberPerStage({
-      ...cooksNumberPerStage,
       Topping: resJson.cooksPerStage.Topping,
       Dough: resJson.cooksPerStage.Dough,
       Baking: resJson.cooksPerStage.Baking,
@@ -39,48 +38,31 @@ const Config = () => {
     setDinersArrivalFrequency(resJson.dinerArrivalConfig.frequency);
     setMinTimeCreatingPizza(resJson.minimumPizzaTime);
     setCooksMode((resJson.specializedCooksMode) ? 'specialized' : 'universal');
-  };
+  }, []);
 
   useEffect(() => {
     getConfig();
-  }, []);
+  }, [getConfig]);
 
   const updateData = async () => {
     const data = {
       specializedCooksMode: (cooksMode === ('specialized' as CooksMode)),
-      pizzaStagesTimeCoeffs: {
-        Packaging: 0.1,
-        Dough: 0.3,
-        Topping: 0.2,
-        Baking: 0.4
-      },
       minimumPizzaTime: minTimeCreatingPizza,
       dinerArrivalConfig: {
         frequency: dinersArrivalFrequency,
         quantity: dinersArrivalNumber
       },
       cashRegisterQuantity: cashRegistersNumber,
-      menu: [
-        {
-          id: 1,
-          name: 'Pepperoni',
-          toppings: ['Tomato', 'Pepperoni', 'Mozzarella'],
-          url: 'https://i.imgur.com/b5XAWtL.png'
-        },
-        {
-          id: 2,
-          name: 'Hawaiian',
-          toppings: ['Neapolitan Sauce', 'Roasted Chicken', 'Pineapples', 'Mozzarella'],
-          url: 'https://i.imgur.com/FAzjO9e.png'
-        }
-      ],
+      menu: [1, 2], // TODO: add menu
       cooksPerStage: {
         Packaging: cooksNumberPerStage.Packaging,
         Dough: cooksNumberPerStage.Dough,
         Baking: cooksNumberPerStage.Baking,
         Topping: cooksNumberPerStage.Topping
       },
-      cooksNumber: cooksMode === ('specialized' as CooksMode) ? (cooksNumberPerStage.Packaging + cooksNumberPerStage.Dough + cooksNumberPerStage.Baking + cooksNumberPerStage.Topping) : cooksNumber
+      cooksNumber: cooksMode === ('specialized' as CooksMode)
+        ? (cooksNumberPerStage.Packaging + cooksNumberPerStage.Dough + cooksNumberPerStage.Baking + cooksNumberPerStage.Topping)
+        : cooksNumber
     };
 
     console.log(data);

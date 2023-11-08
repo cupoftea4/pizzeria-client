@@ -1,4 +1,8 @@
-
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
 
 .root input{
   font-size: 0.75rem;
@@ -13,10 +17,10 @@
   visibility: hidden;
 }
 
-.radioButton-custom{
+.radioButton-custom {
   margin-right: 1rem;
-  height: 1.25rem;
-  width: 1.25rem;
+  aspect-ratio: 1;
+  min-width: 1.25rem;
   border-radius: 50%;
   cursor: pointer;
   background-color: hsl(0, 0%, 89%);
@@ -33,7 +37,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 2rem;
-  row-gap: 0.25rem;
+  row-gap: 0.325rem;
 }
 
 .specialized-cooks-grid-cell {
