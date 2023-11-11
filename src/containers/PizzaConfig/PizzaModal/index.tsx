@@ -11,14 +11,14 @@ type OwnProps = {
   onClose: () => void
 };
 
-const PizzaModal = (props: OwnProps) => {
+const PizzaModal = ({ selectedPizza, addPizzaToSelected, removePizzaFromSelected, onClose }: OwnProps) => {
   const [pizzaArray, setPizzaArray] = useState<Pizza[]>([]);
 
   const handleClick = (pizza: Pizza) => {
-    if (props.selectedPizza?.some(p => p.id === pizza.id)) {
-      props.removePizzaFromSelected(pizza);
+    if (selectedPizza?.some(p => p.id === pizza.id)) {
+      removePizzaFromSelected(pizza);
     } else {
-      props.addPizzaToSelected(pizza);
+      addPizzaToSelected(pizza);
     }
   };
 
@@ -50,13 +50,12 @@ const PizzaModal = (props: OwnProps) => {
                 key={item.id}
                 pizza={item}
                 handleClick={handleClick}
-                isSelected={props.selectedPizza?.some(pizza => pizza.id === item.id) ?? false}
-                addPizzaToSelected={props.addPizzaToSelected}
-                removePizzaFromSelected={props.removePizzaFromSelected} />
+                isSelected={selectedPizza?.some(pizza => pizza.id === item.id) ?? false}
+              />
             ))}
         </div>
         <div className={style.bottom}>
-          <PrimaryButton onClick={props.onClose}>
+          <PrimaryButton onClick={onClose}>
             Accept
           </PrimaryButton>
         </div>

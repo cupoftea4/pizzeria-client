@@ -9,11 +9,9 @@ type OwnProps = {
   time?: number
   isSelected: boolean
   handleClick: (pizza: Pizza) => void
-  addPizzaToSelected: (pizza: Pizza) => void
-  removePizzaFromSelected: (pizza: Pizza) => void
 };
 
-const PizzaItem = (props: OwnProps) => {
+const PizzaItem = ({ pizza, time, isSelected, handleClick }: OwnProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleHover = () => {
@@ -27,10 +25,10 @@ const PizzaItem = (props: OwnProps) => {
   return (
     <div className={style.root}>
       <div className={style['top-overlay']}>
-        <img src={props.pizza.url} alt={props.pizza.name} onClick={() => props.handleClick(props.pizza)} />
-        {props.isSelected
+        <img src={pizza.url} alt={pizza.name} onClick={() => handleClick(pizza)} />
+        {isSelected
           ? (
-            <div className={style.overlay} onClick={() => props.handleClick(props.pizza)}>
+            <div className={style.overlay} onClick={() => handleClick(pizza)}>
               <CheckIcon className={style['check-icon']} />
             </div>
             )
@@ -38,13 +36,13 @@ const PizzaItem = (props: OwnProps) => {
         }
       </div>
       <div className={style.bottom}>
-        <p className={style.text}>{props.pizza.name}</p>
+        <p className={style.text}>{pizza.name}</p>
         <div className={style['hover-overlay']} onMouseEnter={handleHover} onMouseLeave={handleLeave}>
           <ArrowIcon className={style['arrow-icon']} />
           {isHovered
             ? (
               <div className={style.tooltip}>
-                <p>Preparation time: {props.time ?? 'n/a'}</p>
+                <p>Preparation time: {time ?? 'n/a'}</p>
               </div>
               )
             : null
