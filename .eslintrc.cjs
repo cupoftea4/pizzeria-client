@@ -25,6 +25,8 @@ module.exports = {
     "no-return-assign": "warn",
     "@typescript-eslint/no-invalid-void-type": "warn",
     "no-prototype-builtins": "off",
+    "space-before-function-paren": "off",
+    "@typescript-eslint/space-before-function-paren": "off",
     "@typescript-eslint/no-confusing-void-expression": "off",
     "one-var": ["warn", { let: "consecutive" }],
     "@typescript-eslint/prefer-nullish-coalescing": [
@@ -49,7 +51,6 @@ module.exports = {
     "no-trailing-spaces": "error",
     "no-multiple-empty-lines": ["error", { max: 1 }],
     "space-before-blocks": ["error", "always"],
-    "space-before-function-paren": ["error", "always"],
     "space-in-parens": ["error", "never"],
     "space-infix-ops": "error",
     "space-unary-ops": "error",
@@ -66,7 +67,7 @@ module.exports = {
     complexity: ["warn", 10],
     "max-depth": ["warn", 3],
     "max-params": ["warn", 4],
-    "max-statements": ["warn", 15],
+    "max-statements": ["warn", 20],
     "no-nested-ternary": "error",
   },
   settings: {

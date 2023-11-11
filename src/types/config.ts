@@ -15,3 +15,10 @@ export type ConfigData = {
   pizzaStagesTimeCoeffs: Record<CookingStage, number>
   specializedCooksMode: boolean
 };
+
+export type Pizza = {
+  id: number
+  name: string
+  topping: string[]
+  url: string
+};

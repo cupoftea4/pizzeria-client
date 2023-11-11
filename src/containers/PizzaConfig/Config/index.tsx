@@ -6,7 +6,8 @@ import CooksModeChoice from '../CooksModeChoice';
 import Select from '@/components/Select';
 import PizzaMenuIcon from '@/icons/PizzaMenuIcon';
 import RightArrowIcon from '@/icons/RightArrowIcon';
-import type { ConfigData, CookingStage, CooksMode } from '@/types/config';
+import type { ConfigData, CookingStage, CooksMode, Pizza } from '@/types/config';
+import PizzaModal from '../PizzaModal';
 
 const Config = () => {
   const [cashRegistersNumber, setCashRegistersNumber] = useState<number>(0);
@@ -15,12 +16,32 @@ const Config = () => {
   const [minTimeCreatingPizza, setMinTimeCreatingPizza] = useState<number>(0);
   const [cooksMode, setCooksMode] = useState<CooksMode>('none');
   const [cooksNumber, setCooksNumber] = useState(0);
+  const [pizzaModal, setPizzaModal] = useState<boolean>(false);
+  const [selectedPizzaIds, setSelectedPizzaIds] = useState<number[]>([]);
+  const [selectedPizza, setSelectedPizza] = useState<Pizza[] | null>(null);
   const [cooksNumberPerStage, setCooksNumberPerStage] = useState<Record<CookingStage, number>>({
     Topping: 0,
     Dough: 0,
     Baking: 0,
     Packaging: 0
   });
+
+  const handlePizzaModal = () => {
+    setPizzaModal(!pizzaModal);
+  };
+
+  useEffect(() => {
+    setSelectedPizzaIds(selectedPizza?.map((item) => item.id) ?? []);
+    console.log(selectedPizza);
+  }, [selectedPizza]);
+
+  function addPizzaToSelected(pizza: Pizza) {
+    setSelectedPizza(selectedPizza ? [...selectedPizza, pizza] : [pizza]);
+  }
+
+  function removePizzaFromSelected(pizza: Pizza) {
+    setSelectedPizza(selectedPizza?.filter((item) => item.id !== pizza.id) ?? null);
+  }
 
   const getConfig = useCallback(async () => {
     const res = await fetch('http://localhost:8080/config');
@@ -52,7 +73,7 @@ const Config = () => {
         quantity: dinersArrivalNumber
       },
       cashRegisterQuantity: cashRegistersNumber,
-      menu: [1, 2], // TODO: add menu
+      menu: selectedPizzaIds,
       cooksPerStage: {
         Packaging: cooksNumberPerStage.Packaging,
         Dough: cooksNumberPerStage.Dough,
@@ -88,8 +109,14 @@ const Config = () => {
     }
   };
 
-  return (
-    <div className={style.root}>
+  return pizzaModal
+    ? <PizzaModal
+      selectedPizza={selectedPizza}
+      addPizzaToSelected={addPizzaToSelected}
+      removePizzaFromSelected={removePizzaFromSelected}
+      onClose={handlePizzaModal}/>
+    : (
+        <div className={style.root}>
       <div className={style.modal}>
         <div className={style.header}>
           <h1>Simulation Settings</h1>
@@ -126,7 +153,7 @@ const Config = () => {
           />
           <div></div>
           <label className={style.label}>Choose pizza recipes</label>
-          <button className={style['pizza-menu-button']}>
+          <button type='button' className={style['pizza-menu-button']} onClick={handlePizzaModal}>
             <PizzaMenuIcon/>
             <RightArrowIcon/>
           </button>
@@ -145,8 +172,7 @@ const Config = () => {
           </PrimaryButton>
         </div>
       </div>
-    </div>
-  );
+    </div>);
 };
 
 export default Config;
