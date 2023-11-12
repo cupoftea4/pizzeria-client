@@ -67,7 +67,7 @@ module.exports = {
     complexity: ["warn", 10],
     "max-depth": ["warn", 3],
     "max-params": ["warn", 4],
-    "max-statements": ["warn", 15],
+    "max-statements": ["warn", 20],
     "no-nested-ternary": "error",
   },
   settings: {

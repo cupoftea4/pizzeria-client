@@ -2,33 +2,25 @@ import { useEffect, useState } from 'react';
 import style from './style.module.css';
 import PizzaItem from '@/containers/PizzaConfig/PizzaItem';
 import PrimaryButton from '@/components/PrimaryButton';
-import type { Pizza } from '@/services/types';
-
-const callback = () => {
-  console.log('You clicked me!');
-};
+import type { Pizza } from '@/types/config';
 
 type OwnProps = {
-  checkedPizzasCallback?: (selectedPizza: Pizza[] | null) => void
+  selectedPizza: Pizza[] | null
+  addPizzaToSelected: (pizza: Pizza) => void
+  removePizzaFromSelected: (pizza: Pizza) => void
+  onClose: () => void
 };
 
-const PizzaModal = (props: OwnProps) => {
+const PizzaModal = ({ selectedPizza, addPizzaToSelected, removePizzaFromSelected, onClose }: OwnProps) => {
   const [pizzaArray, setPizzaArray] = useState<Pizza[]>([]);
-  const [selectedPizza, setSelectedPizza] = useState<Pizza[] | null>(null);
 
-  const { checkedPizzasCallback } = props;
-
-  useEffect(() => {
-    checkedPizzasCallback?.(selectedPizza);
-  }, [checkedPizzasCallback, selectedPizza]);
-
-  function addPizzaToSelected(pizza: Pizza) {
-    setSelectedPizza(selectedPizza ? [...selectedPizza, pizza] : [pizza]);
-  }
-
-  function removePizzaFromSelected(pizza: Pizza) {
-    setSelectedPizza(selectedPizza?.filter((item) => item.id !== pizza.id) ?? null);
-  }
+  const handleClick = (pizza: Pizza) => {
+    if (selectedPizza?.some(p => p.id === pizza.id)) {
+      removePizzaFromSelected(pizza);
+    } else {
+      addPizzaToSelected(pizza);
+    }
+  };
 
   const getMenu = async () => {
     try {
@@ -57,12 +49,13 @@ const PizzaModal = (props: OwnProps) => {
               <PizzaItem
                 key={item.id}
                 pizza={item}
-                addPizzaToSelected={addPizzaToSelected}
-                removePizzaFromSelected={removePizzaFromSelected} />
+                handleClick={handleClick}
+                isSelected={selectedPizza?.some(pizza => pizza.id === item.id) ?? false}
+              />
             ))}
         </div>
         <div className={style.bottom}>
-          <PrimaryButton onClick={callback}>
+          <PrimaryButton onClick={onClose}>
             Accept
           </PrimaryButton>
         </div>

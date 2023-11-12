@@ -1,5 +1,5 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import PizzaModal from './containers/PizzaConfig/PizzaModal';
+import Config from './containers/PizzaConfig/Config';
 import './styles/_variables.css';
 
 const App = () => {
@@ -7,8 +7,7 @@ const App = () => {
     <>
       <Router>
         <Routes>
-          <Route path="/" element={<h1>Hey</h1>} />
-          <Route path="/menu" element={<PizzaModal/>} />
+        <Route path="/" element={<Config/>} />
         </Routes>
     </Router>
     </>

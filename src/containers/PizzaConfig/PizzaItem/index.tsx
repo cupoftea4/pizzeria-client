@@ -1,28 +1,18 @@
 import style from './style.module.css';
 import ArrowIcon from '@/icons/ArrowIcon';
 import CheckIcon from '@/icons/CheckIcon';
-import type { Pizza } from '@/services/types';
+import type { Pizza } from '@/types/config';
 import { useState } from 'react';
 
 type OwnProps = {
   pizza: Pizza
   time?: number
-  addPizzaToSelected: (pizza: Pizza) => void
-  removePizzaFromSelected: (pizza: Pizza) => void
+  isSelected: boolean
+  handleClick: (pizza: Pizza) => void
 };
 
-const PizzaItem = (props: OwnProps) => {
-  const [isSelected, setIsSelected] = useState(false);
+const PizzaItem = ({ pizza, time, isSelected, handleClick }: OwnProps) => {
   const [isHovered, setIsHovered] = useState(false);
-
-  const handleClick = () => {
-    setIsSelected(!isSelected);
-    if (isSelected) {
-      props.removePizzaFromSelected(props.pizza);
-    } else {
-      props.addPizzaToSelected(props.pizza);
-    }
-  };
 
   const handleHover = () => {
     setIsHovered(true);
@@ -35,10 +25,10 @@ const PizzaItem = (props: OwnProps) => {
   return (
     <div className={style.root}>
       <div className={style['top-overlay']}>
-        <img src={props.pizza.url} alt={props.pizza.name} onClick={handleClick} />
+        <img src={pizza.url} alt={pizza.name} onClick={() => handleClick(pizza)} />
         {isSelected
           ? (
-            <div className={style.overlay} onClick={handleClick}>
+            <div className={style.overlay} onClick={() => handleClick(pizza)}>
               <CheckIcon className={style['check-icon']} />
             </div>
             )
@@ -46,13 +36,13 @@ const PizzaItem = (props: OwnProps) => {
         }
       </div>
       <div className={style.bottom}>
-        <p className={style.text}>{props.pizza.name}</p>
+        <p className={style.text}>{pizza.name}</p>
         <div className={style['hover-overlay']} onMouseEnter={handleHover} onMouseLeave={handleLeave}>
           <ArrowIcon className={style['arrow-icon']} />
           {isHovered
             ? (
               <div className={style.tooltip}>
-                <p>Preparation time: {props.time ?? 'n/a'}</p>
+                <p>Preparation time: {time ?? 'n/a'}</p>
               </div>
               )
             : null
