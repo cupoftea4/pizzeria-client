@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import style from './style.module.css';
 import DownArrow from '@/icons/DownArrowIcon';
 import UpArrow from '@/icons/UpArrowIcon';
