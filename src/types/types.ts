@@ -19,6 +19,39 @@ export type ConfigData = {
 export type Pizza = {
   id: number
   name: string
-  topping: string[]
+  toppings: string[]
   url: string
+};
+
+export type CookStatus = 'busy' | 'free' | 'paused';
+
+export type Cook = {
+  id: number
+  name: string
+  specialization: CookingStage | null
+  status: CookStatus
+  orderId?: number
+  orderPizzaId?: number
+};
+
+export type Order = {
+  id: number
+  cashRegisterId: number
+  orderPizza: {
+    id: number
+    orderId: number
+    recipeId: number
+    currentStage?: CookingStage
+    currentToppingIndex?: string
+  }
+  dinner: {
+    id: number
+    name: string
+  }
+};
+
+export type Simulation = {
+  cashRegistersNumber: number
+  cooks: Cook[]
+  orders: Order[]
 };

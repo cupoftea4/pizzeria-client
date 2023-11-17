@@ -2,16 +2,25 @@ import { useEffect, useState } from 'react';
 import style from './style.module.css';
 import PizzaItem from '@/containers/PizzaConfig/PizzaItem';
 import PrimaryButton from '@/components/PrimaryButton';
-import type { Pizza } from '@/types/config';
+import type { CookingStage, Pizza } from '@/types/types';
 
 type OwnProps = {
   selectedPizza: Pizza[] | null
   addPizzaToSelected: (pizza: Pizza) => void
   removePizzaFromSelected: (pizza: Pizza) => void
+  pizzaStagesTimeCoeffs: Record<CookingStage, number>
+  minTimeCreatingPizza: number
   onClose: () => void
 };
 
-const PizzaModal = ({ selectedPizza, addPizzaToSelected, removePizzaFromSelected, onClose }: OwnProps) => {
+const PizzaModal = ({
+  selectedPizza,
+  addPizzaToSelected,
+  removePizzaFromSelected,
+  pizzaStagesTimeCoeffs,
+  minTimeCreatingPizza,
+  onClose
+}: OwnProps) => {
   const [pizzaArray, setPizzaArray] = useState<Pizza[]>([]);
 
   const handleClick = (pizza: Pizza) => {
@@ -50,6 +59,8 @@ const PizzaModal = ({ selectedPizza, addPizzaToSelected, removePizzaFromSelected
                 key={item.id}
                 pizza={item}
                 handleClick={handleClick}
+                pizzaStagesTimeCoeffs={pizzaStagesTimeCoeffs}
+                minTimeCreatingPizza={minTimeCreatingPizza}
                 isSelected={selectedPizza?.some(pizza => pizza.id === item.id) ?? false}
               />
             ))}

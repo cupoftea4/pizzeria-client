@@ -1,17 +1,18 @@
 import style from './style.module.css';
 import ArrowIcon from '@/icons/ArrowIcon';
 import CheckIcon from '@/icons/CheckIcon';
-import type { Pizza } from '@/types/config';
+import type { CookingStage, Pizza } from '@/types/types';
 import { useState } from 'react';
 
 type OwnProps = {
   pizza: Pizza
-  time?: number
   isSelected: boolean
+  pizzaStagesTimeCoeffs: Record<CookingStage, number>
+  minTimeCreatingPizza: number
   handleClick: (pizza: Pizza) => void
 };
 
-const PizzaItem = ({ pizza, time, isSelected, handleClick }: OwnProps) => {
+const PizzaItem = ({ pizza, isSelected, pizzaStagesTimeCoeffs, minTimeCreatingPizza, handleClick }: OwnProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleHover = () => {
@@ -21,6 +22,12 @@ const PizzaItem = ({ pizza, time, isSelected, handleClick }: OwnProps) => {
   const handleLeave = () => {
     setIsHovered(false);
   };
+
+  const time = Math.round(
+    minTimeCreatingPizza * pizzaStagesTimeCoeffs.Dough +
+    (minTimeCreatingPizza * pizzaStagesTimeCoeffs.Topping) * pizza.toppings.length +
+    minTimeCreatingPizza * pizzaStagesTimeCoeffs.Baking +
+    minTimeCreatingPizza * pizzaStagesTimeCoeffs.Packaging);
 
   return (
     <div className={style.root}>

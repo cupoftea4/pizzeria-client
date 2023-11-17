@@ -1,4 +1,4 @@
-import type { CookingStage, CooksMode } from '@/types/config';
+import type { CookingStage, CooksMode } from '@/types/types';
 import style from './style.module.css';
 import Input from '@/components/Input';
 
