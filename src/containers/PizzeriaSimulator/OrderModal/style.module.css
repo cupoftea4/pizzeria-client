@@ -1,15 +1,5 @@
-
-/* TODO:
-
-  - fix text alignment (it`s now on center but it should be on left)
-    (it also can fix minimum preparation time problem)
-
-   - maybe change font size (i use from figma but it looks too big)
- */
-
 .root {
   min-height: 100vh;
-  color: var(--text-color);
   display: grid;
   place-items: center;
   background-color: hsla(0, 0%, 0%, 0.5);
@@ -18,32 +8,25 @@
 
 .modal {
   background-color: var(--table-background-color);
-  max-width: 50rem;
+  max-width: 45rem;
   max-height: 60rem;
-  padding: 1.25rem;
+  padding: 1.5rem 2.25rem;
   width: 100%;
   border-radius: 1.25rem;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: left;
 }
 
 h1 {
-  font-size: 3.4375rem;
-  font-style: normal;
+  text-align: center;
+  font-size: xx-large;
   font-weight: 500;
 }
 
 .text {
-  text-align: left;
-
-  padding-bottom: 4.5rem;
+  padding-bottom: 3.5em; /* FIXME: to be properly responsible this need to by dynamic (depend on screen height) */
 }
 
 p {
-  font-size: 2.125rem;
+  font-size: 1.5rem;
   font-weight: 300;
 }
 
@@ -52,6 +35,7 @@ strong {
 }
 
 .order-items {
+  font-size: x-large;
   color: hsl(30, 100%, 29%);
   font-weight: 700;
   text-align: center;

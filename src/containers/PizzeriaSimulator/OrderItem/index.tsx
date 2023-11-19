@@ -32,16 +32,19 @@ const OrderItem = ({
 
   return (
     <div className={style.root}>
-      <div className={style['top-section']}>
-        <div className={style['text-section']}>
-          <p><strong>Item: </strong>{pizza?.name}</p>
-          <p><strong>Ingredients: </strong>{pizza?.toppings.join(', ')}</p>
+      <div>
+
+        <div className={style['top-section']}>
+          <div className={style['text-section']}>
+            <p><strong>Item: </strong>{pizza?.name}</p>
+            <p><strong>Ingredients: </strong>{pizza?.toppings.join(', ')}</p>
+          </div>
+          <div className={style['image-section']}>
+            <img src={pizza?.url} alt={pizza?.name} />
+          </div>
         </div>
-        <div className={style['image-section']}>
-          <img src={pizza?.url} alt={pizza?.name} />
-        </div>
+        <p><strong>Minimum preparation time: </strong>{pizzaTime}</p>
       </div>
-      <p><strong>Minimum preparation time: </strong>{pizzaTime}</p>
       <div className={style.table}>
         <div className={style.row}>
           <div className={style.columnHeader}>Cook name</div>
@@ -53,13 +56,13 @@ const OrderItem = ({
         </div>
       </div>
       <div className={style.buttons}>
-        <div onClick={onLeftClick}>
+        <button onClick={onLeftClick}>
           <LeftPolygon />
-        </div>
+        </button>
         <p>{pizzaId}</p>
-        <div onClick={onRightClick}>
+        <button onClick={onRightClick}>
           <RightPolygon />
-        </div>
+        </button>
       </div>
     </div>
   );
