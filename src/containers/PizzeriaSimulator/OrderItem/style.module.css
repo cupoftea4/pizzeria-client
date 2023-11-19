@@ -1,0 +1,66 @@
+
+/* TODO: 
+  - fix table view
+  - fix minimum preparation time
+  - maybe change font size (i use from figma but it looks too big)
+*/
+
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: hsla(58, 100%, 94%);
+  border-radius: 1.25rem;
+  padding: 1.25rem;
+  margin: 1rem 2rem;
+}
+
+.top-section {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+}
+
+.image-section {
+  max-width: 10rem;
+  aspect-ratio: 1/1;
+}
+
+.table {
+  max-height: 20rem;
+  padding: 0.125rem;
+  display: grid;
+  width: 100%;
+  overflow-y: auto;
+}
+
+.columnHeader {
+  border-top: 1px solid #000;
+  font-weight: 500;
+  font-size: 1.875rem;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 2fr 3fr 2fr;
+  border-bottom: 1px solid #000;
+}
+
+.row div {
+  padding: 0.125rem;
+  border-right: 1px solid #000;
+  font-weight: 400;
+  font-size: 1.5rem;
+}
+
+.row div:last-child {
+  border-right: none;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+}

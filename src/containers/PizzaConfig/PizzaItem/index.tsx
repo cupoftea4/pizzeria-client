@@ -1,15 +1,15 @@
 import style from './style.module.css';
 import ArrowIcon from '@/icons/ArrowIcon';
 import CheckIcon from '@/icons/CheckIcon';
-import type { CookingStage, Pizza } from '@/types/types';
+import type { CookingStage, PizzaRecipe } from '@/types/types';
 import { useState } from 'react';
 
 type OwnProps = {
-  pizza: Pizza
+  pizza: PizzaRecipe
   isSelected: boolean
   pizzaStagesTimeCoeffs: Record<CookingStage, number>
   minTimeCreatingPizza: number
-  handleClick: (pizza: Pizza) => void
+  handleClick: (pizza: PizzaRecipe) => void
 };
 
 const PizzaItem = ({ pizza, isSelected, pizzaStagesTimeCoeffs, minTimeCreatingPizza, handleClick }: OwnProps) => {

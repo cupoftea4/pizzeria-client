@@ -1,5 +1,5 @@
 export type CooksMode = 'none' | 'specialized' | 'universal';
-export type CookingStage = 'Baking' | 'Dough' | 'Packaging' | 'Topping';
+export type CookingStage = 'Baking' | 'Dough' | 'Packaging' | 'Topping' | 'Completed';
 export type Frequency = 'Low' | 'Medium' | 'High';
 
 export type ConfigData = {
@@ -16,7 +16,7 @@ export type ConfigData = {
   specializedCooksMode: boolean
 };
 
-export type Pizza = {
+export type PizzaRecipe = {
   id: number
   name: string
   toppings: string[]
@@ -37,21 +37,17 @@ export type Cook = {
 export type Order = {
   id: number
   cashRegisterId: number
-  orderPizza: {
+  createdAt: string
+  completedAt?: string
+  orderPizza: Array<{
     id: number
     orderId: number
     recipeId: number
     currentStage?: CookingStage
     currentToppingIndex?: string
-  }
+  }>
   dinner: {
     id: number
     name: string
   }
-};
-
-export type Simulation = {
-  cashRegistersNumber: number
-  cooks: Cook[]
-  orders: Order[]
 };

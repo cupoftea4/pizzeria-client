@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import style from './style.module.css';
 import PizzaItem from '@/containers/PizzaConfig/PizzaItem';
 import PrimaryButton from '@/components/PrimaryButton';
-import type { CookingStage, Pizza } from '@/types/types';
+import type { CookingStage, PizzaRecipe } from '@/types/types';
 
 type OwnProps = {
-  selectedPizza: Pizza[] | null
-  addPizzaToSelected: (pizza: Pizza) => void
-  removePizzaFromSelected: (pizza: Pizza) => void
+  selectedPizza: PizzaRecipe[] | null
+  addPizzaToSelected: (pizza: PizzaRecipe) => void
+  removePizzaFromSelected: (pizza: PizzaRecipe) => void
   pizzaStagesTimeCoeffs: Record<CookingStage, number>
   minTimeCreatingPizza: number
   onClose: () => void
@@ -21,9 +21,9 @@ const PizzaModal = ({
   minTimeCreatingPizza,
   onClose
 }: OwnProps) => {
-  const [pizzaArray, setPizzaArray] = useState<Pizza[]>([]);
+  const [pizzaArray, setPizzaArray] = useState<PizzaRecipe[]>([]);
 
-  const handleClick = (pizza: Pizza) => {
+  const handleClick = (pizza: PizzaRecipe) => {
     if (selectedPizza?.some(p => p.id === pizza.id)) {
       removePizzaFromSelected(pizza);
     } else {
@@ -35,7 +35,7 @@ const PizzaModal = ({
     try {
       const response = await fetch('http://localhost:8080/config/menu');
       const pizzaArray = await response.json();
-      setPizzaArray(pizzaArray as Pizza[]);
+      setPizzaArray(pizzaArray as PizzaRecipe[]);
     } catch (error) {
       console.log(error);
     }
@@ -54,7 +54,7 @@ const PizzaModal = ({
         <div className={style.list}>
           {pizzaArray
             .sort((p1, p2) => p1.name.length - p2.name.length)
-            .map((item: Pizza) => (
+            .map((item: PizzaRecipe) => (
               <PizzaItem
                 key={item.id}
                 pizza={item}
