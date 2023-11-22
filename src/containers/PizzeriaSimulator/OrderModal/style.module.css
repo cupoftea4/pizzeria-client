@@ -1,0 +1,42 @@
+.root {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background-color: hsla(0, 0%, 0%, 0.5);
+  color: hsl(93, 12%, 29%);
+}
+
+.modal {
+  background-color: var(--table-background-color);
+  max-width: 45rem;
+  max-height: 60rem;
+  padding: 1.5rem 2.25rem;
+  width: 100%;
+  border-radius: 1.25rem;
+}
+
+h1 {
+  text-align: center;
+  font-size: xx-large;
+  font-weight: 500;
+}
+
+.text {
+  padding-bottom: 3.5em; /* FIXME: to be properly responsible this need to by dynamic (depend on screen height) */
+}
+
+p {
+  font-size: 1.5rem;
+  font-weight: 300;
+}
+
+strong {
+  font-weight: 700;
+}
+
+.order-items {
+  font-size: x-large;
+  color: hsl(30, 100%, 29%);
+  font-weight: 700;
+  text-align: center;
+}
