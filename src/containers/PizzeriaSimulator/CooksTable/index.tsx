@@ -1,9 +1,23 @@
+/* eslint-disable max-len */
 import { useState } from 'react';
 import style from './style.module.css';
 import DownArrow from '@/icons/DownArrowIcon';
 import UpArrow from '@/icons/UpArrowIcon';
+import type { Cook, Order, PizzaRecipe } from '@/types/types';
+import StopIcon from '@/icons/StopIcon';
+import PlayIcon from '@/icons/PlayIcon';
 
-const CooksTable = () => {
+type OwnProps = {
+  cooks: Cook[]
+  orders: Order[]
+  menu: PizzaRecipe[]
+};
+
+const CooksTable = ({
+  cooks,
+  orders,
+  menu
+}: OwnProps) => {
   const [showTable, setShowTable] = useState(false);
 
   const toggleTable = () => {
@@ -26,28 +40,28 @@ const CooksTable = () => {
             <div className={style.columnHeader}>Stage</div>
             <div className={style.columnHeader}>State</div>
           </div>
-          <div className={style.row}>
-            <div>William</div>
-            <div>#12.1 (Pepperoni)</div>
-            <div>Topping</div>
-            <div>
-              <button>
-                {}
-              </button>
-            </div>
-          </div>
-          <div className={style.row}>
-            <div>Helen</div>
-            <div>#12.2 (Quatro Formagi)</div>
-            <div>Baking</div>
-            <div></div>
-          </div>
-          <div className={style.row}>
-            <div>Harry</div>
-            <div>#15.1 (Spanish)</div>
-            <div>Baking</div>
-            <div></div>
-          </div>
+          {
+            cooks.map((cook) => {
+              const order = orders.find(o => o.id === cook.orderId);
+              const orderPizza = orders.find(o => o.id === cook.orderId)?.orderPizza.at(cook.orderPizzaId!);
+
+              return (<div key={`${cook.id}`} className={style.row}>
+                <div>{cook.name}</div>
+                <div>{
+                  `#${order?.id}.${orderPizza?.id}
+                  (${menu.find(p => p.id === orderPizza?.id)?.name})`
+                }</div>
+                <div>{orderPizza?.currentStage}</div>
+                {cook.status !== 'free' &&
+                  <div>
+                    <button className={style['cook-state-button']}>
+                      {cook.status === 'busy' ? <StopIcon /> : <PlayIcon />}
+                    </button>
+                  </div>
+                }
+              </div>);
+            })
+          }
         </div>
       )}
     </div>

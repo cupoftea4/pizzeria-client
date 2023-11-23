@@ -37,6 +37,8 @@
 }
 
 .row div {
+  display: flex;
+  align-items: center;
   padding: 0.125rem;
   border-right: 1px solid #000;
 }
@@ -48,4 +50,15 @@
 .columnHeader {
   border-top: 1px solid #000;
   font-weight: bold;
+}
+
+.cook-state-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cook-state-button svg{
+  width: 50%;
+  height: fit-content;
 }

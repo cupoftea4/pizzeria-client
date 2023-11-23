@@ -3,7 +3,7 @@ import Config from './containers/PizzaConfig/Config';
 import './styles/_variables.css';
 import Simulator from './containers/PizzeriaSimulator/Simulator';
 import OrderModal from './containers/PizzeriaSimulator/OrderModal';
-import { cooksMock, menuMock, orderMock } from './types/orders_mock';
+import { cooksMock, menuMock, orderMock, ordersMock } from './types/orders_mock';
 
 const App = () => {
   return (
@@ -11,7 +11,12 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/" element={<Config />} />
-          <Route path="/run" element={<Simulator />} />
+          <Route path="/run" element={
+            <Simulator
+              cooks={cooksMock}
+              orders={ordersMock}
+              menu={menuMock}
+            />} />
           <Route path="/run/modal" element={
             <OrderModal
               cooks={cooksMock}
