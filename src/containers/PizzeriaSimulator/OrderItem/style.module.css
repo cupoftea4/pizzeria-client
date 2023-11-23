@@ -1,0 +1,58 @@
+.root {
+  background-color: hsla(58, 100%, 94%);
+  border-radius: 1.25rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+}
+
+
+.top-section {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+}
+
+.image-section {
+  max-width: 9rem;
+  aspect-ratio: 1/1;
+  margin-inline: 2rem;
+}
+
+.table {
+  max-height: 20rem;
+  padding: 0.125rem;
+  display: grid;
+  overflow-y: auto;
+}
+
+.columnHeader {
+  border-top: 1px solid #000;
+  font-weight: 500;
+  font-size: 1.875rem;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  border-bottom: 1px solid #000;
+}
+
+.row div {
+  padding: 0.125rem;
+  border-right: 1px solid #000;
+  font-weight: 400;
+  font-size: 1.5rem;
+}
+
+.row div:last-child {
+  border-right: none;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}

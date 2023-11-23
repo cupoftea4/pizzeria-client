@@ -6,7 +6,7 @@ import CooksModeChoice from '../CooksModeChoice';
 import Select from '@/components/Select';
 import PizzaMenuIcon from '@/icons/PizzaMenuIcon';
 import RightArrowIcon from '@/icons/RightArrowIcon';
-import type { ConfigData, CookingStage, CooksMode, Pizza } from '@/types/config';
+import type { ConfigData, CookingStage, CooksMode, PizzaRecipe } from '@/types/types';
 import PizzaModal from '../PizzaModal';
 
 const Config = () => {
@@ -18,12 +18,20 @@ const Config = () => {
   const [cooksNumber, setCooksNumber] = useState(0);
   const [pizzaModal, setPizzaModal] = useState<boolean>(false);
   const [selectedPizzaIds, setSelectedPizzaIds] = useState<number[]>([]);
-  const [selectedPizza, setSelectedPizza] = useState<Pizza[] | null>(null);
+  const [selectedPizza, setSelectedPizza] = useState<PizzaRecipe[] | null>(null);
   const [cooksNumberPerStage, setCooksNumberPerStage] = useState<Record<CookingStage, number>>({
     Topping: 0,
     Dough: 0,
     Baking: 0,
-    Packaging: 0
+    Packaging: 0,
+    Completed: 0
+  });
+  const [pizzaStagesTimeCoeffs, setPizzaStagesTimeCoeffs] = useState<Record<CookingStage, number>>({
+    Topping: 0,
+    Dough: 0,
+    Baking: 0,
+    Packaging: 0,
+    Completed: 0
   });
 
   const handlePizzaModal = () => {
@@ -32,14 +40,13 @@ const Config = () => {
 
   useEffect(() => {
     setSelectedPizzaIds(selectedPizza?.map((item) => item.id) ?? []);
-    console.log(selectedPizza);
   }, [selectedPizza]);
 
-  function addPizzaToSelected(pizza: Pizza) {
+  function addPizzaToSelected(pizza: PizzaRecipe) {
     setSelectedPizza(selectedPizza ? [...selectedPizza, pizza] : [pizza]);
   }
 
-  function removePizzaFromSelected(pizza: Pizza) {
+  function removePizzaFromSelected(pizza: PizzaRecipe) {
     setSelectedPizza(selectedPizza?.filter((item) => item.id !== pizza.id) ?? null);
   }
 
@@ -52,12 +59,20 @@ const Config = () => {
       Topping: resJson.cooksPerStage.Topping,
       Dough: resJson.cooksPerStage.Dough,
       Baking: resJson.cooksPerStage.Baking,
-      Packaging: resJson.cooksPerStage.Packaging
+      Packaging: resJson.cooksPerStage.Packaging,
+      Completed: resJson.cooksPerStage.Completed
     });
     setDinersArrivalNumber(resJson.dinerArrivalConfig.quantity);
     setDinersArrivalFrequency(resJson.dinerArrivalConfig.frequency);
     setMinTimeCreatingPizza(resJson.minimumPizzaTime);
     setCooksMode((resJson.specializedCooksMode) ? 'specialized' : 'universal');
+    setPizzaStagesTimeCoeffs({
+      Topping: resJson.pizzaStagesTimeCoeffs.Topping,
+      Dough: resJson.pizzaStagesTimeCoeffs.Dough,
+      Baking: resJson.pizzaStagesTimeCoeffs.Baking,
+      Packaging: resJson.pizzaStagesTimeCoeffs.Packaging,
+      Completed: resJson.pizzaStagesTimeCoeffs.Completed
+    });
   }, []);
 
   useEffect(() => {
@@ -114,6 +129,8 @@ const Config = () => {
       selectedPizza={selectedPizza}
       addPizzaToSelected={addPizzaToSelected}
       removePizzaFromSelected={removePizzaFromSelected}
+      pizzaStagesTimeCoeffs={pizzaStagesTimeCoeffs}
+      minTimeCreatingPizza={minTimeCreatingPizza}
       onClose={handlePizzaModal}/>
     : (
         <div className={style.root}>
