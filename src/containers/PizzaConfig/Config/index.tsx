@@ -26,13 +26,6 @@ const Config = () => {
     Packaging: 0,
     Completed: 0
   });
-  const [pizzaStagesTimeCoeffs, setPizzaStagesTimeCoeffs] = useState<Record<CookingStage, number>>({
-    Topping: 0,
-    Dough: 0,
-    Baking: 0,
-    Packaging: 0,
-    Completed: 0
-  });
 
   const handlePizzaModal = () => {
     setPizzaModal(!pizzaModal);
@@ -66,13 +59,6 @@ const Config = () => {
     setDinersArrivalFrequency(resJson.dinerArrivalConfig.frequency);
     setMinTimeCreatingPizza(resJson.minimumPizzaTime);
     setCooksMode((resJson.specializedCooksMode) ? 'specialized' : 'universal');
-    setPizzaStagesTimeCoeffs({
-      Topping: resJson.pizzaStagesTimeCoeffs.Topping,
-      Dough: resJson.pizzaStagesTimeCoeffs.Dough,
-      Baking: resJson.pizzaStagesTimeCoeffs.Baking,
-      Packaging: resJson.pizzaStagesTimeCoeffs.Packaging,
-      Completed: resJson.pizzaStagesTimeCoeffs.Completed
-    });
   }, []);
 
   useEffect(() => {
@@ -129,7 +115,6 @@ const Config = () => {
       selectedPizza={selectedPizza}
       addPizzaToSelected={addPizzaToSelected}
       removePizzaFromSelected={removePizzaFromSelected}
-      pizzaStagesTimeCoeffs={pizzaStagesTimeCoeffs}
       minTimeCreatingPizza={minTimeCreatingPizza}
       onClose={handlePizzaModal}/>
     : (
