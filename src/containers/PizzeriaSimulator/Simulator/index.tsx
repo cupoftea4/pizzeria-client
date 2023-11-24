@@ -2,7 +2,7 @@ import style from './style.module.css';
 import PizzeriaBackground from '../PizzeriaBackground';
 import OrdersTable from '../OrdersTable';
 import { useCallback, useEffect, useState } from 'react';
-import type { Cook, Order, PizzaRecipe } from '@/types/types';
+import type { Cook, CookingStage, Order, PizzaRecipe } from '@/types/types';
 import OrderModal from '../OrderModal';
 import CooksTable from '../CooksTable';
 
@@ -13,6 +13,13 @@ const Simulator = () => {
   const [menu, setMenu] = useState<PizzaRecipe[]>([]);
 
   const [currentOrder, setCurrentOrder] = useState<Order>();
+  const [pizzaStagesTimeCoeffs, setPizzaStagesTimeCoeffs] = useState<Record<CookingStage, number>>({
+    Topping: 0,
+    Dough: 0,
+    Baking: 0,
+    Packaging: 0,
+    Completed: 0
+  });
 
   const setState = (data: { cooks: Cook[], orders: Order[] }) => {
     setOrders(data.orders);
@@ -22,11 +29,13 @@ const Simulator = () => {
   type ConfigData = {
     minimumPizzaTime: number
     menu: PizzaRecipe[]
+    pizzaStagesTimeCoeffs: Record<CookingStage, number>
   };
 
   const setConfig = useCallback((data: ConfigData) => {
     setMinimumPizzaTime(data.minimumPizzaTime);
     setMenu(data.menu);
+    setPizzaStagesTimeCoeffs(data.pizzaStagesTimeCoeffs);
     console.log('Minimum pizza time:');
     console.log(data.minimumPizzaTime);
     console.log('Menu:');
@@ -62,6 +71,7 @@ const Simulator = () => {
         <OrderModal
           cooks={cooks}
           order={currentOrder}
+          pizzaStagesTimeCoeffs={pizzaStagesTimeCoeffs}
           minimumPizzaTime={minimumPizzaTime}
           menu={menu}
         />
