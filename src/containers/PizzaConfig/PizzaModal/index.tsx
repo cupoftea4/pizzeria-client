@@ -8,7 +8,7 @@ type OwnProps = {
   selectedPizza: PizzaRecipe[] | null
   addPizzaToSelected: (pizza: PizzaRecipe) => void
   removePizzaFromSelected: (pizza: PizzaRecipe) => void
-  pizzaStagesTimeCoeffs: Record<CookingStage, number>
+  pizzaStagesTimeCoeffs?: Record<CookingStage, number>
   minTimeCreatingPizza: number
   onClose: () => void
 };
@@ -17,7 +17,13 @@ const PizzaModal = ({
   selectedPizza,
   addPizzaToSelected,
   removePizzaFromSelected,
-  pizzaStagesTimeCoeffs,
+  pizzaStagesTimeCoeffs = {
+    Dough: 0.3,
+    Topping: 0.2,
+    Baking: 0.4,
+    Packaging: 0.1,
+    Completed: 0
+  },
   minTimeCreatingPizza,
   onClose
 }: OwnProps) => {

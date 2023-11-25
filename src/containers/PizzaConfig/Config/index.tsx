@@ -8,6 +8,7 @@ import PizzaMenuIcon from '@/icons/PizzaMenuIcon';
 import RightArrowIcon from '@/icons/RightArrowIcon';
 import type { ConfigData, CookingStage, CooksMode, PizzaRecipe } from '@/types/types';
 import PizzaModal from '../PizzaModal';
+import { useNavigate } from 'react-router-dom';
 
 const Config = () => {
   const [cashRegistersNumber, setCashRegistersNumber] = useState<number>(0);
@@ -33,6 +34,8 @@ const Config = () => {
     Packaging: 0,
     Completed: 0
   });
+
+  const navigate = useNavigate();
 
   const handlePizzaModal = () => {
     setPizzaModal(!pizzaModal);
@@ -116,6 +119,21 @@ const Config = () => {
 
       if (response.ok) {
         console.log('Config data updated successfully');
+        try {
+          const response = await fetch('http://localhost:8080/simulation/start', {
+            method: 'POST'
+          });
+
+          // eslint-disable-next-line max-depth
+          if (response.ok) {
+            console.log('Simulation started successfully');
+            navigate('/run');
+          } else {
+            console.error('Error starting simulation');
+          }
+        } catch (error) {
+          console.error('Error occurred:', error);
+        }
       } else {
         console.error('Error updating config data');
       }
