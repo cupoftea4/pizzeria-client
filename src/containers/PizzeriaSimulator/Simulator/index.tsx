@@ -1,16 +1,25 @@
 import style from './style.module.css';
 import PizzeriaBackground from '../PizzeriaBackground';
 import OrdersTable from '../OrdersTable';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Cook, CookingStage, Order, PizzaRecipe } from '@/types/types';
 import OrderModal from '../OrderModal';
 import CooksTable from '../CooksTable';
+import { useConfig } from '@/hooks/useConfig';
+import { useKitchenState } from '@/hooks/useKitchenState';
+import { useCookingOrderUpdateSubscription, useNewOrderSubscription } from '@/hooks/useEventSubscribtion';
 
 const Simulator = () => {
+  const { config, error: configError } = useConfig();
+  const { kitchenState, error: kitchenStateError } = useKitchenState();
   const [orders, setOrders] = useState<Order[]>([]);
   const [cooks, setCooks] = useState<Cook[]>([]);
   const [minimumPizzaTime, setMinimumPizzaTime] = useState(123);
   const [menu, setMenu] = useState<PizzaRecipe[]>([]);
+
+  useNewOrderSubscription((order) => orders.push(order));
+  useCookingOrderUpdateSubscription((order) => setOrders(orders.map(o => o.id === order.id ? order : o)));
+  useCookingOrderUpdateSubscription((order) => {});
 
   const [currentOrder, setCurrentOrder] = useState<Order>();
   const [pizzaStagesTimeCoeffs, setPizzaStagesTimeCoeffs] = useState<Record<CookingStage, number>>({
@@ -21,62 +30,42 @@ const Simulator = () => {
     Completed: 0
   });
 
-  const setState = (data: { cooks: Cook[], orders: Order[] }) => {
-    setOrders(data.orders);
-    setCooks(data.cooks);
-  };
-
-  type ConfigData = {
-    minimumPizzaTime: number
-    menu: PizzaRecipe[]
-    pizzaStagesTimeCoeffs: Record<CookingStage, number>
-  };
-
-  const setConfig = useCallback((data: ConfigData) => {
-    setMinimumPizzaTime(data.minimumPizzaTime);
-    setMenu(data.menu);
-    setPizzaStagesTimeCoeffs(data.pizzaStagesTimeCoeffs);
-    console.log('Minimum pizza time:');
-    console.log(data.minimumPizzaTime);
-    console.log('Menu:');
-    console.log(data.menu);
-  }, []);
+  useEffect(() => {
+    if (!config) return;
+    setMinimumPizzaTime(config.minimumPizzaTime);
+    setMenu(config.menu);
+    setPizzaStagesTimeCoeffs(config.pizzaStagesTimeCoeffs);
+  }, [config]);
 
   useEffect(() => {
-    fetch('http://localhost:8080/kitchen-state')
-      .then(response => response.json())
-      .then(data => setState(data as { cooks: Cook[], orders: Order[] }));
+    if (!kitchenState) return;
+    setCooks(kitchenState.cooks);
+    setOrders(kitchenState.orders);
+  }, [kitchenState]);
 
-    fetch('http://localhost:8080/config')
-      .then(response => response.json())
-      .then(data => setConfig(data as ConfigData));
-  }, [setConfig]);
 
-  // temporary solution for disable ts error
-  console.log(orders);
-  console.log(setCurrentOrder);
-
+  if (kitchenStateError || configError) return <div>{kitchenStateError ?? configError}</div>;
   return (
-    <div className={style.root}>
-      <div className={style.background}>
-        <PizzeriaBackground/>
-      </div>
-      <OrdersTable orders={orders} menu={menu} />
-      <CooksTable
-        cooks={cooks}
-        orders={orders}
-        menu={menu}
-      />
-      { currentOrder &&
-        <OrderModal
+      <div className={style.root}>
+        <div className={style.background}>
+          <PizzeriaBackground/>
+        </div>
+        <OrdersTable orders={orders} menu={menu} />
+        <CooksTable
           cooks={cooks}
-          order={currentOrder}
-          pizzaStagesTimeCoeffs={pizzaStagesTimeCoeffs}
-          minimumPizzaTime={minimumPizzaTime}
+          orders={orders}
           menu={menu}
         />
-      }
-    </div>
+        { currentOrder &&
+          <OrderModal
+            cooks={cooks}
+            order={currentOrder}
+            pizzaStagesTimeCoeffs={pizzaStagesTimeCoeffs}
+            minimumPizzaTime={minimumPizzaTime}
+            menu={menu}
+          />
+        }
+      </div>
   );
 };
 

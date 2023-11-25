@@ -2,6 +2,13 @@ export type CooksMode = 'none' | 'specialized' | 'universal';
 export type CookingStage = 'Baking' | 'Dough' | 'Packaging' | 'Topping' | 'Completed';
 export type Frequency = 'Low' | 'Medium' | 'High';
 
+export type PizzaRecipe = {
+  id: number
+  name: string
+  toppings: string[]
+  url: string
+};
+
 export type ConfigData = {
   cashRegisterQuantity: number
   cooksNumber: number
@@ -10,18 +17,13 @@ export type ConfigData = {
     frequency: Frequency
     quantity: number
   }
-  menu: number[]
+  menu: PizzaRecipe[]
   minimumPizzaTime: number
   pizzaStagesTimeCoeffs: Record<CookingStage, number>
   specializedCooksMode: boolean
 };
 
-export type PizzaRecipe = {
-  id: number
-  name: string
-  toppings: string[]
-  url: string
-};
+export type ConfigDataSaveDto = Omit<ConfigData, 'menu'> & { menu: number[] };
 
 export type CookStatus = 'busy' | 'free' | 'paused';
 
