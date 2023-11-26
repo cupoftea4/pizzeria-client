@@ -2,7 +2,6 @@ import type { CookingOrderUpdateMessage } from '@/hooks/useEventSubscribtion';
 import type { Cook, Order } from '@/types/types';
 
 export function mergeUpdateIntoOrder(order: Order, update: CookingOrderUpdateMessage): Order {
-  console.log('mergeUpdateIntoOrder', order, update);
   return {
     ...order,
     orderPizzas: [...order.orderPizzas.map(
@@ -22,7 +21,6 @@ export function mergeUpdateIntoCook(cook: Cook, update: CookingOrderUpdateMessag
   return {
     ...cook,
     orderId: update.orderId,
-    orderPizzaId: update.orderPizzaId,
-    status: 'BUSY'
+    orderPizzaId: update.orderPizzaId
   } satisfies Cook;
 }

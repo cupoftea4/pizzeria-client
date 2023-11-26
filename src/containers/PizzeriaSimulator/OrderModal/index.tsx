@@ -4,7 +4,7 @@ import OrderItem from '@/containers/PizzeriaSimulator/OrderItem';
 import type { Cook, CookingStage, Order, PizzaRecipe } from '@/types/types';
 
 type OwnProps = {
-  cooks: Cook[]
+  cooks: Record<number, Cook>
   order: Order
   minimumPizzaTime: number
   pizzaStagesTimeCoeffs?: Record<CookingStage, number>
@@ -45,7 +45,7 @@ const OrderModal = ({
   };
 
   useEffect(() => {
-    setCooksOnThisOrder(cooks.filter(cook => cook.orderId === order.id));
+    setCooksOnThisOrder(Object.values(cooks).filter(cook => cook.orderId === order.id));
   }, [cooks, order.id]);
 
   useEffect(() => {
@@ -58,7 +58,6 @@ const OrderModal = ({
       setCountedTime(Math.floor(elapsedTime / 1000));
     }, 1000);
 
-    // Clear interval on component unmount
     return () => clearInterval(interval);
   }, [order.createdAt]);
 

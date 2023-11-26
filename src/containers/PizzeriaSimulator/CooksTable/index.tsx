@@ -9,8 +9,8 @@ import PlayIcon from '@/icons/PlayIcon';
 import { useCookControl } from '@/hooks/useCookControl';
 
 type OwnProps = {
-  cooks: Cook[]
-  orders: Order[]
+  cooks: Record<number, Cook>
+  orders: Record<number, Order>
   menu: PizzaRecipe[]
 };
 
@@ -51,11 +51,11 @@ const CooksTable = ({
             <div className={style.columnHeader}>State</div>
           </div>
           {
-            cooks.map((cook) => {
-              const order = orders.find(o => o.id === cook.orderId);
+            Object.entries(cooks).map(([cookId, cook]) => {
+              const order = cook.orderId ? orders[cook.orderId] : null;
               const orderPizza = order?.orderPizzas?.find(p => p.id === cook.orderPizzaId);
 
-              return (<div key={`${cook.id}`} className={style.row}>
+              return (<div key={`${cookId}`} className={style.row}>
                 <div>{cook.name}</div>
                 {order
                   ? <div>{
@@ -64,13 +64,11 @@ const CooksTable = ({
                     }</div>
                   : <div>Free</div>}
                 <div>{orderPizza?.currentStage}</div>
-                {cook.status !== 'FREE' &&
                   <div>
                     <button className={style['cook-state-button']} onClick={() => handleCookStateChange(cook)}>
                       {cook.status === 'BUSY' ? <StopIcon /> : <PlayIcon />}
                     </button>
                   </div>
-                }
               </div>);
             })
           }

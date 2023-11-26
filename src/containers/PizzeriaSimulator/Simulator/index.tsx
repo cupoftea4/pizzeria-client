@@ -2,7 +2,7 @@ import style from './style.module.css';
 import PizzeriaBackground from '../PizzeriaBackground';
 import OrdersTable from '../OrdersTable';
 import { useCallback, useEffect, useState } from 'react';
-import type { Cook, CookingStage, Order, PizzaRecipe } from '@/types/types';
+import type { Cook, CookStatus, CookingStage, Order, PizzaRecipe } from '@/types/types';
 import OrderModal from '../OrderModal';
 import CooksTable from '../CooksTable';
 import { useConfig } from '@/hooks/useConfig';
@@ -15,42 +15,56 @@ import {
   type PausedCookUpdateMessage
 } from '@/hooks/useEventSubscribtion';
 import { mergeUpdateIntoCook, mergeUpdateIntoOrder } from '@/utils/orders';
+import { arrayToObject } from '@/utils/object';
 
 const Simulator = () => {
   const { config, error: configError } = useConfig();
   const { kitchenState, error: kitchenStateError } = useKitchenState();
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [cooks, setCooks] = useState<Cook[]>([]);
+  const [orders, setOrders] = useState<Record<number, Order>>([]);
+  const [cooks, setCooks] = useState<Record<number, Cook>>({});
   const [minimumPizzaTime, setMinimumPizzaTime] = useState(123);
   const [menu, setMenu] = useState<PizzaRecipe[]>([]);
 
   const handleNewOrderUpdate = useCallback((order: Order) => {
     console.warn('NEW ORDER', order);
-    setOrders(orders => [...orders, order]);
+    setOrders(orders => ({ ...orders, [order.id]: order }));
   }, []);
 
-  const handleCookingOrderUpdate = useCallback((order: CookingOrderUpdateMessage) => {
-    console.warn('ORDER UPDATE', order);
+  const handleCookingOrderUpdate = useCallback((update: CookingOrderUpdateMessage) => {
+    console.warn('ORDER UPDATE', update);
     // BUTT PLUG: something evil is happening here
-    if (order.currentStage === null) {
-      order.completedAt = new Date().toISOString();
-      order.currentStage = 'Completed';
+    if (update.currentStage === null) {
+      update.completedAt = new Date().toISOString();
+      update.currentStage = 'Completed';
     }
-    setOrders(orders => orders.map(o => o.id !== order.orderId ? o : mergeUpdateIntoOrder(o, order)));
+    setOrders(orders => {
+      const orderToUpdate = orders[update.orderId];
+      if (!orderToUpdate) return orders;
+      return { ...orders, [update.orderId]: mergeUpdateIntoOrder(orderToUpdate, update) };
+    });
     setCooks(cooks => {
-      const newCooks = cooks.map(c => c.id !== order.cookId ? c : mergeUpdateIntoCook(c, order));
-      return newCooks;
+      if (update.cookId === null) return cooks;
+      const cookToUpdate = cooks[update.cookId];
+      if (!cookToUpdate) return cooks;
+      return {
+        ...cooks,
+        [update.cookId]: mergeUpdateIntoCook(cookToUpdate, update)
+      };
     });
   }, []);
 
   const handlePausedCookUpdate = useCallback((update: PausedCookUpdateMessage) => {
     setCooks(cooks => {
-      const updatedCook = cooks.find(c => c.id === update.cookId);
+      const updatedCook = cooks[update.cookId];
       if (!updatedCook) return cooks;
-      return [
-        ...cooks.filter(c => c.id !== update.cookId),
-        { ...updatedCook, status: 'PAUSED' }
-      ];
+      let newStatus: CookStatus = updatedCook.orderId !== null ? 'BUSY' : 'FREE'; // assuming it was paused before
+      if (updatedCook.status !== 'PAUSED') {
+        newStatus = 'PAUSED';
+      }
+      return {
+        ...cooks,
+        [update.cookId]: { ...updatedCook, status: newStatus }
+      };
     });
   }, []);
 
@@ -77,8 +91,8 @@ const Simulator = () => {
 
   useEffect(() => {
     if (!kitchenState) return;
-    setCooks(kitchenState.cooks);
-    setOrders(kitchenState.orders);
+    setCooks(arrayToObject(kitchenState.cooks, 'id'));
+    setOrders(arrayToObject(kitchenState.orders, 'id'));
   }, [kitchenState]);
 
   if (kitchenStateError || configError) return <div>{kitchenStateError ?? configError}</div>;

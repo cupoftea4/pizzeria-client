@@ -5,7 +5,7 @@ import UpArrow from '@/icons/UpArrowIcon';
 import type { Order, PizzaRecipe } from '@/types/types';
 
 type OwnProps = {
-  orders: Order[]
+  orders: Record<number, Order>
   menu: PizzaRecipe[]
 };
 
@@ -29,7 +29,7 @@ const OrdersTable = ({ orders, menu }: OwnProps) => {
   useEffect(() => {
     const intervalId = setInterval(() => {
       const times: Record<number, number> = {};
-      orders.forEach((order) => {
+      Object.values(orders).forEach((order) => {
         order.orderPizzas.forEach((orderPizza) => {
           const endTime = orderPizza.completedAt ? new Date(orderPizza.completedAt) : new Date();
           const elapsedTime = endTime.getTime() - new Date(order.createdAt).getTime();
@@ -62,7 +62,7 @@ const OrdersTable = ({ orders, menu }: OwnProps) => {
             <div className={style.columnHeader}>Status</div>
           </div>
           {
-            orders.map((order) => {
+            Object.values(orders).sort((o1, o2) => o2.id - o1.id).map((order) => {
               const rowBackgroundColor = orderColors[order.id] ?? generateRowColor();
               if (!orderColors[order.id]) {
                 setOrderColors((prev) => ({
