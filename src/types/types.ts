@@ -25,7 +25,7 @@ export type ConfigData = {
 
 export type ConfigDataSaveDto = Omit<ConfigData, 'menu'> & { menu: number[] };
 
-export type CookStatus = 'busy' | 'free' | 'paused';
+export type CookStatus = 'BUSY' | 'FREE' | 'PAUSED';
 
 export type Cook = {
   id: number
@@ -40,15 +40,15 @@ export type Order = {
   id: number
   cashRegisterId: number
   createdAt: string
-  completedAt?: string
-  orderPizza: Array<{
+  orderPizzas: Array<{
     id: number
     orderId: number
     recipeId: number
-    currentStage?: CookingStage
-    currentToppingIndex?: string
+    currentStage?: CookingStage | null
+    currentTopping?: string
+    completedAt?: string | null
   }>
-  dinner: {
+  diner: {
     id: number
     name: string
   }

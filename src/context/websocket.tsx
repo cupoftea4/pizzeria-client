@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import SockJS from 'sockjs-client';
 import { type Client, over } from 'stompjs';
 
@@ -49,13 +49,20 @@ export const useSend = <T,>() => {
 export function useSubscribe<T>(topic: string, callback: (message: T) => void) {
   const stompClient = useWebSocket();
 
-  useEffect(() => {
+  const subscribe = useCallback(() => {
     if (stompClient?.connected) {
-      const subscription = stompClient.subscribe(topic, (message) => {
+      stompClient.subscribe(topic, (message) => {
         const parsedMessage = JSON.parse(message.body) as T;
         callback(parsedMessage);
       });
-      return () => subscription.unsubscribe();
     }
   }, [stompClient, topic, callback]);
+
+  const unsubscribe = useCallback(() => {
+    if (stompClient?.connected) {
+      stompClient.unsubscribe(topic);
+    }
+  }, [stompClient, topic]);
+
+  return { subscribe, unsubscribe };
 }

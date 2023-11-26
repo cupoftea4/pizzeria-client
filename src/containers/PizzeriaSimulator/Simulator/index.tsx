@@ -1,13 +1,20 @@
 import style from './style.module.css';
 import PizzeriaBackground from '../PizzeriaBackground';
 import OrdersTable from '../OrdersTable';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { Cook, CookingStage, Order, PizzaRecipe } from '@/types/types';
 import OrderModal from '../OrderModal';
 import CooksTable from '../CooksTable';
 import { useConfig } from '@/hooks/useConfig';
 import { useKitchenState } from '@/hooks/useKitchenState';
-import { useCookingOrderUpdateSubscription, useNewOrderSubscription } from '@/hooks/useEventSubscribtion';
+import {
+  useCookingOrderUpdateSubscription,
+  useNewOrderSubscription,
+  usePausedCookUpdateSubscription,
+  type CookingOrderUpdateMessage,
+  type PausedCookUpdateMessage
+} from '@/hooks/useEventSubscribtion';
+import { mergeUpdateIntoCook, mergeUpdateIntoOrder } from '@/utils/orders';
 
 const Simulator = () => {
   const { config, error: configError } = useConfig();
@@ -17,11 +24,42 @@ const Simulator = () => {
   const [minimumPizzaTime, setMinimumPizzaTime] = useState(123);
   const [menu, setMenu] = useState<PizzaRecipe[]>([]);
 
-  useNewOrderSubscription((order) => orders.push(order));
-  useCookingOrderUpdateSubscription((order) => setOrders(orders.map(o => o.id === order.id ? order : o)));
-  useCookingOrderUpdateSubscription((order) => {});
+  const handleNewOrderUpdate = useCallback((order: Order) => {
+    console.warn('NEW ORDER', order);
+    setOrders(orders => [...orders, order]);
+  }, []);
+
+  const handleCookingOrderUpdate = useCallback((order: CookingOrderUpdateMessage) => {
+    console.warn('ORDER UPDATE', order);
+    // BUTT PLUG: something evil is happening here
+    if (order.currentStage === null) {
+      order.completedAt = new Date().toISOString();
+      order.currentStage = 'Completed';
+    }
+    setOrders(orders => orders.map(o => o.id !== order.orderId ? o : mergeUpdateIntoOrder(o, order)));
+    setCooks(cooks => {
+      const newCooks = cooks.map(c => c.id !== order.cookId ? c : mergeUpdateIntoCook(c, order));
+      return newCooks;
+    });
+  }, []);
+
+  const handlePausedCookUpdate = useCallback((update: PausedCookUpdateMessage) => {
+    setCooks(cooks => {
+      const updatedCook = cooks.find(c => c.id === update.cookId);
+      if (!updatedCook) return cooks;
+      return [
+        ...cooks.filter(c => c.id !== update.cookId),
+        { ...updatedCook, status: 'PAUSED' }
+      ];
+    });
+  }, []);
+
+  useNewOrderSubscription(handleNewOrderUpdate);
+  useCookingOrderUpdateSubscription(handleCookingOrderUpdate);
+  usePausedCookUpdateSubscription(handlePausedCookUpdate);
 
   const [currentOrder, setCurrentOrder] = useState<Order>();
+  console.log(setCurrentOrder);
   const [pizzaStagesTimeCoeffs, setPizzaStagesTimeCoeffs] = useState<Record<CookingStage, number>>({
     Topping: 0,
     Dough: 0,
@@ -42,7 +80,6 @@ const Simulator = () => {
     setCooks(kitchenState.cooks);
     setOrders(kitchenState.orders);
   }, [kitchenState]);
-
 
   if (kitchenStateError || configError) return <div>{kitchenStateError ?? configError}</div>;
   return (

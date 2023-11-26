@@ -1,37 +1,72 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSubscribe } from '@/context/websocket';
+import type { CookingStage } from '@/types/types';
+import { useEffect } from 'react';
 
 // Define types for messages
 type BadRequestMessage = any; // Replace 'any' with the actual type
-type NewOrderMessage = any; // Replace 'any' with the actual type
-type PausedCookUpdateMessage = any; // Replace 'any' with the actual type
-type CookingOrderUpdateMessage = any; // Replace 'any' with the actual type
+export type PausedCookUpdateMessage = {
+  cookId: number
+};
+
+type NewOrderMessage = {
+  id: number
+  cashRegisterId: number
+  createdAt: string
+  diner: { id: number, name: string }
+  orderPizzas: []
+};
+
+export type CookingOrderUpdateMessage = {
+  currentStage: CookingStage
+  currentTopping?: string
+  cookId: number | null
+  orderId: number
+  orderPizzaId: number
+  completedAt: string | null
+};
 
 // Specific subscription hooks
 export const useBadRequestSubscription = (callback: (message: BadRequestMessage) => void) => {
-  useSubscribe<BadRequestMessage>('/app/topic/badRequest', (message) => {
-    console.error('/app/topic/badRequest', message);
-    callback(message);
-  });
+  const { subscribe, unsubscribe } = useSubscribe<BadRequestMessage>('/app/topic/badRequest', callback);
+
+  useEffect(() => {
+    subscribe();
+    return () => {
+      unsubscribe();
+    };
+  }, [subscribe, unsubscribe]);
 };
 
 export const useNewOrderSubscription = (callback: (message: NewOrderMessage) => void) => {
-  useSubscribe<NewOrderMessage>('/topic/newOrder', (message) => {
-    console.log('/topic/newOrder', message);
-    callback(message);
-  });
+  const { subscribe, unsubscribe } = useSubscribe<NewOrderMessage>('/topic/newOrder', callback);
+
+  useEffect(() => {
+    subscribe();
+    return () => {
+      unsubscribe();
+    };
+  }, [subscribe, unsubscribe]);
 };
 
 export const usePausedCookUpdateSubscription = (callback: (message: PausedCookUpdateMessage) => void) => {
-  useSubscribe<PausedCookUpdateMessage>('/topic/pausedCookUpdate', (message) => {
-    console.log('/topic/pausedCookUpdate', message);
-    callback(message);
-  });
+  const { subscribe, unsubscribe } = useSubscribe<PausedCookUpdateMessage>('/topic/pausedCookUpdate', callback);
+
+  useEffect(() => {
+    subscribe();
+    return () => {
+      unsubscribe();
+    };
+  }, [subscribe, unsubscribe]);
 };
 
 export const useCookingOrderUpdateSubscription = (callback: (message: CookingOrderUpdateMessage) => void) => {
-  useSubscribe<CookingOrderUpdateMessage>('/topic/cookingOrderUpdate', (message) => {
-    console.log('/topic/cookingOrderUpdate', message);
-    callback(message);
-  });
+  const { subscribe, unsubscribe } = useSubscribe<CookingOrderUpdateMessage>('/topic/cookingOrderUpdate', callback);
+
+  useEffect(() => {
+    subscribe();
+    return () => {
+      unsubscribe();
+    };
+  }, [subscribe, unsubscribe]);
 };
