@@ -66,7 +66,7 @@ const CooksTable = ({
                 <div>{orderPizza?.currentStage}</div>
                   <div>
                     <button className={style['cook-state-button']} onClick={() => handleCookStateChange(cook)}>
-                      {cook.status === 'BUSY' ? <StopIcon /> : <PlayIcon />}
+                      {cook.status === 'PAUSED' ? <PlayIcon /> : <StopIcon />}
                     </button>
                   </div>
               </div>);

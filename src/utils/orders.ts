@@ -18,6 +18,14 @@ export function mergeUpdateIntoOrder(order: Order, update: CookingOrderUpdateMes
 }
 
 export function mergeUpdateIntoCook(cook: Cook, update: CookingOrderUpdateMessage): Cook {
+  if (update.currentStage === null) {
+    return {
+      ...cook,
+      orderId: undefined,
+      orderPizzaId: undefined,
+      status: cook.status === 'BUSY' ? 'FREE' : cook.status
+    } satisfies Cook;
+  }
   return {
     ...cook,
     orderId: update.orderId,

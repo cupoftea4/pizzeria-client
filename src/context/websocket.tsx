@@ -18,7 +18,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
     console.log('CONNECTING');
     client.connect({}, () => {
-      console.log('CONNECTED');
+      client.debug = () => {}; // disable verbose logging
       console.log('Connected to WebSocket');
       setStompClient(client);
     });

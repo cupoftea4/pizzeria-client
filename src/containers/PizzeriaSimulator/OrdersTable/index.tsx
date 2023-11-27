@@ -7,9 +7,10 @@ import type { Order, PizzaRecipe } from '@/types/types';
 type OwnProps = {
   orders: Record<number, Order>
   menu: PizzaRecipe[]
+  onOrderClick: (order: Order) => void
 };
 
-const OrdersTable = ({ orders, menu }: OwnProps) => {
+const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
   const [showTable, setShowTable] = useState(false);
   const [elapsedTimes, setElapsedTimes] = useState<Record<number, number>>({});
   const [orderColors, setOrderColors] = useState<Record<number, string>>({});
@@ -78,11 +79,12 @@ const OrdersTable = ({ orders, menu }: OwnProps) => {
                     key={`${order.id}.${index + 1}`}
                     className={style.row}
                     style={{ backgroundColor: rowBackgroundColor }}
+                    onClick={() => onOrderClick(order)}
                   >
                     <div>{`${order.id}.${index + 1}`}</div>
                     <div>{order.diner.name}</div>
                     <div>{menu.find(p => p.id === orderPizza.recipeId)?.name}</div>
-                    <div>{`${orderPizza.currentStage ?? 'New'} (${
+                    <div>{`${orderPizza.currentStage ?? 'Waiting'} (${
                       elapsedTimes[orderPizza.id] ?? 'N/A'
                     }s)`}</div>
                   </div>

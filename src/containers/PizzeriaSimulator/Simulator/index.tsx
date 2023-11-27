@@ -32,16 +32,12 @@ const Simulator = () => {
 
   const handleCookingOrderUpdate = useCallback((update: CookingOrderUpdateMessage) => {
     console.warn('ORDER UPDATE', update);
-    // BUTT PLUG: something evil is happening here
-    if (update.currentStage === null) {
-      update.completedAt = new Date().toISOString();
-      update.currentStage = 'Completed';
-    }
     setOrders(orders => {
       const orderToUpdate = orders[update.orderId];
       if (!orderToUpdate) return orders;
       return { ...orders, [update.orderId]: mergeUpdateIntoOrder(orderToUpdate, update) };
     });
+
     setCooks(cooks => {
       if (update.cookId === null) return cooks;
       const cookToUpdate = cooks[update.cookId];
@@ -55,9 +51,12 @@ const Simulator = () => {
 
   const handlePausedCookUpdate = useCallback((update: PausedCookUpdateMessage) => {
     setCooks(cooks => {
+      console.warn('PAUSED COOK UPDATE', update);
       const updatedCook = cooks[update.cookId];
-      if (!updatedCook) return cooks;
-      let newStatus: CookStatus = updatedCook.orderId !== null ? 'BUSY' : 'FREE'; // assuming it was paused before
+      if (!updatedCook) {
+        return cooks;
+      }
+      let newStatus: CookStatus = updatedCook.orderId !== undefined ? 'BUSY' : 'FREE'; // assuming it was paused before
       if (updatedCook.status !== 'PAUSED') {
         newStatus = 'PAUSED';
       }
@@ -73,7 +72,6 @@ const Simulator = () => {
   usePausedCookUpdateSubscription(handlePausedCookUpdate);
 
   const [currentOrder, setCurrentOrder] = useState<Order>();
-  console.log(setCurrentOrder);
   const [pizzaStagesTimeCoeffs, setPizzaStagesTimeCoeffs] = useState<Record<CookingStage, number>>({
     Topping: 0,
     Dough: 0,
@@ -101,7 +99,7 @@ const Simulator = () => {
         <div className={style.background}>
           <PizzeriaBackground/>
         </div>
-        <OrdersTable orders={orders} menu={menu} />
+        <OrdersTable orders={orders} menu={menu} onOrderClick={(order) => setCurrentOrder(order)} />
         <CooksTable
           cooks={cooks}
           orders={orders}
