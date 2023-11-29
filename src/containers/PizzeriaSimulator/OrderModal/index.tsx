@@ -4,7 +4,7 @@ import OrderItem from '@/containers/PizzeriaSimulator/OrderItem';
 import type { Cook, CookingStage, Order, PizzaRecipe } from '@/types/types';
 
 type OwnProps = {
-  cooks: Cook[]
+  cooks: Record<number, Cook>
   order: Order
   minimumPizzaTime: number
   pizzaStagesTimeCoeffs?: Record<CookingStage, number>
@@ -32,12 +32,12 @@ const OrderModal = ({
     if (currentPizza > 0) {
       setCurrentPizza(currentPizza - 1);
     } else {
-      setCurrentPizza(order.orderPizza.length - 1);
+      setCurrentPizza(order.orderPizzas.length - 1);
     }
   };
 
   const onRightClick = () => {
-    if (currentPizza < order.orderPizza.length - 1) {
+    if (currentPizza < order.orderPizzas.length - 1) {
       setCurrentPizza(currentPizza + 1);
     } else {
       setCurrentPizza(0);
@@ -45,7 +45,7 @@ const OrderModal = ({
   };
 
   useEffect(() => {
-    setCooksOnThisOrder(cooks.filter(cook => cook.orderId === order.id));
+    setCooksOnThisOrder(Object.values(cooks).filter(cook => cook.orderId === order.id));
   }, [cooks, order.id]);
 
   useEffect(() => {
@@ -58,7 +58,6 @@ const OrderModal = ({
       setCountedTime(Math.floor(elapsedTime / 1000));
     }, 1000);
 
-    // Clear interval on component unmount
     return () => clearInterval(interval);
   }, [order.createdAt]);
 
@@ -67,16 +66,16 @@ const OrderModal = ({
       <div className={style.modal}>
         <h1>Order #{order.id}</h1>
         <div className={style.text}>
-          <p><strong>Dinner name: </strong>{order.dinner.name}</p>
+          <p><strong>Dinner name: </strong>{order.diner.name}</p>
           <p><strong>Cooking duration: </strong>{countedTime}s</p>
         </div>
         <div className={style.order}>
           <p className={style['order-items']}>Order items</p>
           <OrderItem
-            pizza={menu.find(recipe => recipe.id === order.orderPizza[currentPizza]?.recipeId)}
+            pizza={menu.find(recipe => recipe.id === order.orderPizzas[currentPizza]?.recipeId)}
             pizzaId={currentPizza + 1}
             cookName={cooksOnThisOrder.find(cook => cook.orderPizzaId === currentPizza)?.name ?? 'None'}
-            stage={order.orderPizza[currentPizza]?.currentStage ?? 'None'}
+            stage={order.orderPizzas[currentPizza]?.currentStage ?? 'None'}
             minimumPizzaTime={minimumPizzaTime}
             pizzaStagesTimeCoeffs={pizzaStagesTimeCoeffs}
             onLeftClick={onLeftClick}

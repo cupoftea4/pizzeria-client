@@ -5,16 +5,16 @@ import PrimaryButton from '@/components/PrimaryButton';
 import type { CookingStage, PizzaRecipe } from '@/types/types';
 
 type OwnProps = {
-  selectedPizza: PizzaRecipe[] | null
-  addPizzaToSelected: (pizza: PizzaRecipe) => void
-  removePizzaFromSelected: (pizza: PizzaRecipe) => void
+  selectedPizzaIds: number[] | null
+  addPizzaToSelected: (ids: number) => void
+  removePizzaFromSelected: (pizza: number) => void
   pizzaStagesTimeCoeffs?: Record<CookingStage, number>
   minTimeCreatingPizza: number
   onClose: () => void
 };
 
 const PizzaModal = ({
-  selectedPizza,
+  selectedPizzaIds,
   addPizzaToSelected,
   removePizzaFromSelected,
   pizzaStagesTimeCoeffs = {
@@ -30,10 +30,10 @@ const PizzaModal = ({
   const [pizzaArray, setPizzaArray] = useState<PizzaRecipe[]>([]);
 
   const handleClick = (pizza: PizzaRecipe) => {
-    if (selectedPizza?.some(p => p.id === pizza.id)) {
-      removePizzaFromSelected(pizza);
+    if (selectedPizzaIds?.some(id => id === pizza.id)) {
+      removePizzaFromSelected(pizza.id);
     } else {
-      addPizzaToSelected(pizza);
+      addPizzaToSelected(pizza.id);
     }
   };
 
@@ -67,7 +67,7 @@ const PizzaModal = ({
                 handleClick={handleClick}
                 pizzaStagesTimeCoeffs={pizzaStagesTimeCoeffs}
                 minTimeCreatingPizza={minTimeCreatingPizza}
-                isSelected={selectedPizza?.some(pizza => pizza.id === item.id) ?? false}
+                isSelected={selectedPizzaIds?.some(id => id === item.id) ?? false}
               />
             ))}
         </div>

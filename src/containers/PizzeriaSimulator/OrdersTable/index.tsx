@@ -5,11 +5,12 @@ import UpArrow from '@/icons/UpArrowIcon';
 import type { Order, PizzaRecipe } from '@/types/types';
 
 type OwnProps = {
-  orders: Order[]
+  orders: Record<number, Order>
   menu: PizzaRecipe[]
+  onOrderClick: (order: Order) => void
 };
 
-const OrdersTable = ({ orders, menu }: OwnProps) => {
+const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
   const [showTable, setShowTable] = useState(false);
   const [elapsedTimes, setElapsedTimes] = useState<Record<number, number>>({});
   const [orderColors, setOrderColors] = useState<Record<number, string>>({});
@@ -27,22 +28,21 @@ const OrdersTable = ({ orders, menu }: OwnProps) => {
   };
 
   useEffect(() => {
-    const intervals: NodeJS.Timeout[] = [];
-
-    orders.forEach((order) => {
-      const intervalId = setInterval(() => {
-        const elapsedTime = Date.now() - new Date(order.createdAt).getTime();
-        setElapsedTimes((prev) => ({
-          ...prev,
-          [order.id]: Math.floor(elapsedTime / 1000)
-        }));
-      }, 1000);
-
-      intervals.push(intervalId);
-    });
+    const intervalId = setInterval(() => {
+      const times: Record<number, number> = {};
+      Object.values(orders).forEach((order) => {
+        order.orderPizzas.forEach((orderPizza) => {
+          const endTime = orderPizza.completedAt ? new Date(orderPizza.completedAt) : new Date();
+          const elapsedTime = endTime.getTime() - new Date(order.createdAt).getTime();
+          times[orderPizza.id] = Math.round(elapsedTime / 1000);
+          return times;
+        });
+      });
+      setElapsedTimes(times);
+    }, 1000);
 
     return () => {
-      intervals.forEach((intervalId) => clearInterval(intervalId));
+      clearInterval(intervalId);
     };
   }, [orders]);
 
@@ -63,7 +63,7 @@ const OrdersTable = ({ orders, menu }: OwnProps) => {
             <div className={style.columnHeader}>Status</div>
           </div>
           {
-            orders.map((order) => {
+            Object.values(orders).sort((o1, o2) => o2.id - o1.id).map((order) => {
               const rowBackgroundColor = orderColors[order.id] ?? generateRowColor();
               if (!orderColors[order.id]) {
                 setOrderColors((prev) => ({
@@ -71,20 +71,25 @@ const OrdersTable = ({ orders, menu }: OwnProps) => {
                   [order.id]: rowBackgroundColor
                 }));
               }
+
               return (
-                order.orderPizza.map((orderPizza, index) => (
+                order.orderPizzas?.map((orderPizza, index) => {
+                  return (
                   <div
                     key={`${order.id}.${index + 1}`}
                     className={style.row}
                     style={{ backgroundColor: rowBackgroundColor }}
+                    onClick={() => onOrderClick(order)}
                   >
                     <div>{`${order.id}.${index + 1}`}</div>
-                    <div>{order.dinner.name}</div>
-                    <div>{menu.find(p => p.id === orderPizza.id)?.name}</div>
-                    <div>{`${orderPizza.currentStage} (${elapsedTimes[order.id]}s)`}</div>
+                    <div>{order.diner.name}</div>
+                    <div>{menu.find(p => p.id === orderPizza.recipeId)?.name}</div>
+                    <div>{`${orderPizza.currentStage ?? 'Waiting'} (${
+                      elapsedTimes[orderPizza.id] ?? 'N/A'
+                    }s)`}</div>
                   </div>
-                )
-                ));
+                  );
+                }));
             })
           }
         </div>
