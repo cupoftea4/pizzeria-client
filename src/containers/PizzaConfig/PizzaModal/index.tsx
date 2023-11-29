@@ -86,7 +86,7 @@ const PizzaModal = ({
             Accept
           </PrimaryButton>
           <PrimaryButton onClick={onSelectAll}>
-            Select all
+            {selectedPizzaIds?.length === pizzaArray.length ? 'Deselect all' : 'Select all'}
           </PrimaryButton>
         </div>
       </div>

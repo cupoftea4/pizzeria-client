@@ -65,7 +65,7 @@ const OrderModal = ({
 
   return (
     <div className={style.root} onClick={onClose}>
-      <div className={style.modal}>
+      <div className={style.modal} onClick={(e) => e.stopPropagation()}>
         <h1>Order #{order.id}</h1>
         <div className={style.text}>
           <p><strong>Dinner name: </strong>{order.diner.name}</p>
