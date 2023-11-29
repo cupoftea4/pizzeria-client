@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import style from './style.module.css';
 import DownArrow from '@/icons/DownArrowIcon';
 import UpArrow from '@/icons/UpArrowIcon';
@@ -14,6 +14,37 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
   const [showTable, setShowTable] = useState(false);
   const [elapsedTimes, setElapsedTimes] = useState<Record<number, number>>({});
   const [orderColors, setOrderColors] = useState<Record<number, string>>({});
+
+  const [visibleRows, setVisibleRows] = useState<Order[]>([]);
+  const tableRef = useRef<HTMLDivElement>(null);
+  const rowHeight = 50; // Height of each row
+  const buffer = 5; // Number of rows to render outside the viewport
+
+  const handleScroll = useCallback(() => {
+    if (!tableRef.current) {
+      return;
+    }
+    const scrollTop = tableRef.current.scrollTop;
+    const startRow = Math.max(0, Math.floor(scrollTop / rowHeight) - buffer);
+    const visibleRowCount = Math.ceil(window.innerHeight / rowHeight) + 2 * buffer;
+    const endRow = startRow + visibleRowCount;
+    setVisibleRows(Object.values(orders).slice(startRow, endRow));
+  }, [orders]);
+
+  useEffect(() => {
+    setVisibleRows(Object.values(orders).slice(0, window.innerHeight / rowHeight + buffer));
+    // Add scroll event listener
+    const tableElement = tableRef.current;
+    if (!tableElement) {
+      return;
+    }
+    tableElement.addEventListener('scroll', handleScroll);
+
+    return () => {
+      // Remove scroll event listener
+      tableElement.removeEventListener('scroll', handleScroll);
+    };
+  }, [handleScroll, orders]);
 
   const toggleTable = () => {
     setShowTable(!showTable);
@@ -62,8 +93,9 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
             <div className={style.columnHeader}>Item</div>
             <div className={style.columnHeader}>Status</div>
           </div>
+          <div className={style.table} ref={tableRef} onScroll={handleScroll}>
           {
-            Object.values(orders).sort((o1, o2) => o2.id - o1.id).map((order) => {
+            Object.values(visibleRows).map((order) => {
               const rowBackgroundColor = orderColors[order.id] ?? generateRowColor();
               if (!orderColors[order.id]) {
                 setOrderColors((prev) => ({
@@ -93,7 +125,7 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
             })
           }
         </div>
-      )}
+        </div>)}
     </div>
   );
 };
