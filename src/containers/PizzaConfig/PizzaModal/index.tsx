@@ -7,9 +7,10 @@ import type { CookingStage, PizzaRecipe } from '@/types/types';
 type OwnProps = {
   selectedPizzaIds: number[] | null
   addPizzaToSelected: (ids: number) => void
-  removePizzaFromSelected: (pizza: number) => void
+  removePizzaFromSelected: (ids: number) => void
   pizzaStagesTimeCoeffs?: Record<CookingStage, number>
   minTimeCreatingPizza: number
+  selectAll: (ids: number[]) => void
   onClose: () => void
 };
 
@@ -24,6 +25,7 @@ const PizzaModal = ({
     Packaging: 0.1,
     Completed: 0
   },
+  selectAll,
   minTimeCreatingPizza,
   onClose
 }: OwnProps) => {
@@ -44,6 +46,14 @@ const PizzaModal = ({
       setPizzaArray(pizzaArray as PizzaRecipe[]);
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const onSelectAll = () => {
+    if (selectedPizzaIds?.length === pizzaArray.length) {
+      selectAll([]);
+    } else {
+      selectAll(pizzaArray.map(pizza => pizza.id));
     }
   };
 
@@ -74,6 +84,9 @@ const PizzaModal = ({
         <div className={style.bottom}>
           <PrimaryButton onClick={onClose}>
             Accept
+          </PrimaryButton>
+          <PrimaryButton onClick={onSelectAll}>
+            Select all
           </PrimaryButton>
         </div>
       </div>

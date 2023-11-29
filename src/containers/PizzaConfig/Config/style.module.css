@@ -5,6 +5,13 @@
   background-color: var(--background-color);
 }
 
+.loading {
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+  height: 100%;
+}
+
 .config-root {
   min-height: 100vh;
   display: grid;

@@ -44,7 +44,7 @@ const Config = () => {
     });
   };
 
-  if (!localConfig) return <div>Loading...</div>;
+  if (!localConfig) return <div className={style.loading}>Loading...</div>;
   if (configError || simulationError) return <div>{configError ?? simulationError}</div>;
   return (
     <div className={style.root}>
@@ -58,6 +58,8 @@ const Config = () => {
               localConfig.menu.filter((id) => id !== pizza)
             )}
             onClose={handlePizzaModal}
+            pizzaStagesTimeCoeffs={localConfig.pizzaStagesTimeCoeffs}
+            selectAll={(ids: number[]) => updateLocalConfig('menu', ids)}
             minTimeCreatingPizza={localConfig.minimumPizzaTime}
           />)
         : (

@@ -9,6 +9,7 @@ type OwnProps = {
   minimumPizzaTime: number
   pizzaStagesTimeCoeffs?: Record<CookingStage, number>
   menu: PizzaRecipe[]
+  onClose: () => void
 };
 
 const OrderModal = ({
@@ -22,25 +23,26 @@ const OrderModal = ({
     Packaging: 0.1,
     Completed: 0
   },
-  menu
+  menu,
+  onClose
 }: OwnProps) => {
-  const [currentPizza, setCurrentPizza] = useState(0);
+  const [currentPizzaIndex, setCurrentPizzaIndex] = useState(0);
   const [cooksOnThisOrder, setCooksOnThisOrder] = useState<Cook[]>([]);
   const [countedTime, setCountedTime] = useState(0);
 
   const onLeftClick = () => {
-    if (currentPizza > 0) {
-      setCurrentPizza(currentPizza - 1);
+    if (currentPizzaIndex > 0) {
+      setCurrentPizzaIndex(currentPizzaIndex - 1);
     } else {
-      setCurrentPizza(order.orderPizzas.length - 1);
+      setCurrentPizzaIndex(order.orderPizzas.length - 1);
     }
   };
 
   const onRightClick = () => {
-    if (currentPizza < order.orderPizzas.length - 1) {
-      setCurrentPizza(currentPizza + 1);
+    if (currentPizzaIndex < order.orderPizzas.length - 1) {
+      setCurrentPizzaIndex(currentPizzaIndex + 1);
     } else {
-      setCurrentPizza(0);
+      setCurrentPizzaIndex(0);
     }
   };
 
@@ -49,7 +51,7 @@ const OrderModal = ({
   }, [cooks, order.id]);
 
   useEffect(() => {
-    setCurrentPizza(0);
+    setCurrentPizzaIndex(0);
   }, []);
 
   useEffect(() => {
@@ -62,7 +64,7 @@ const OrderModal = ({
   }, [order.createdAt]);
 
   return (
-    <div className={style.root}>
+    <div className={style.root} onClick={onClose}>
       <div className={style.modal}>
         <h1>Order #{order.id}</h1>
         <div className={style.text}>
@@ -72,10 +74,15 @@ const OrderModal = ({
         <div className={style.order}>
           <p className={style['order-items']}>Order items</p>
           <OrderItem
-            pizza={menu.find(recipe => recipe.id === order.orderPizzas[currentPizza]?.recipeId)}
-            pizzaId={currentPizza + 1}
-            cookName={cooksOnThisOrder.find(cook => cook.orderPizzaId === currentPizza)?.name ?? 'None'}
-            stage={order.orderPizzas[currentPizza]?.currentStage ?? 'None'}
+            pizza={menu.find(recipe => recipe.id === order.orderPizzas[currentPizzaIndex]?.recipeId)}
+            pizzaId={currentPizzaIndex + 1}
+            pizzaCount={order.orderPizzas.length}
+            cookName={
+              cooksOnThisOrder.find(
+                cook => cook.orderPizzaId === order.orderPizzas[currentPizzaIndex]?.id
+              )?.name ?? null
+            }
+            stage={order.orderPizzas[currentPizzaIndex]?.currentStage ?? 'None'}
             minimumPizzaTime={minimumPizzaTime}
             pizzaStagesTimeCoeffs={pizzaStagesTimeCoeffs}
             onLeftClick={onLeftClick}
