@@ -100,9 +100,7 @@ const Simulator = () => {
   if (kitchenStateError || configError) return <div>{kitchenStateError ?? configError}</div>;
   return (
       <div className={style.root}>
-        <div className={style.background}>
-          <PizzeriaBackground/>
-        </div>
+        <PizzeriaBackground/>
         <OrdersTable orders={orders} menu={menu} onOrderClick={(order) => setCurrentOrder(order)} />
         <CooksTable
           cooks={cooks}

@@ -6,7 +6,7 @@ import type { CookingStage, PizzaRecipe } from '@/types/types';
 
 type OwnProps = {
   selectedPizzaIds: number[] | null
-  addPizzaToSelected: (ids: number) => void
+  addPizzaToSelected: (...ids: number[]) => void
   removePizzaFromSelected: (ids: number) => void
   pizzaStagesTimeCoeffs?: Record<CookingStage, number>
   minTimeCreatingPizza: number
@@ -39,13 +39,13 @@ const PizzaModal = ({
     }
   };
 
-  const getMenu = async () => {
+  const getMenu = async () => { // TODO: refactor this into a hook
     try {
       const response = await fetch('http://localhost:8080/config/menu');
-      const pizzaArray = await response.json();
-      setPizzaArray(pizzaArray as PizzaRecipe[]);
+      const pizzaArray = await response.json() as PizzaRecipe[];
+      setPizzaArray(pizzaArray);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
