@@ -4,8 +4,8 @@
   color: hsl(93, 12%, 29%);
   z-index: 2;
   position: absolute;
-  top: 0%;
-  left: 0%;
+  top: 1rem;
+  left: 1rem;
   padding: 1.5rem;
   border-radius: 1.25rem;
 }

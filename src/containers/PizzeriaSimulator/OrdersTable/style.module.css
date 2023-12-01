@@ -39,6 +39,7 @@
 .row div {
   padding: 0.125rem;
   border-right: 1px solid #000;
+  cursor: pointer;
 }
 
 .row div:last-child {

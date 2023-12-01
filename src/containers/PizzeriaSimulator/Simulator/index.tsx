@@ -80,6 +80,10 @@ const Simulator = () => {
     Completed: 0
   });
 
+  const handleModalClose = () => {
+    setCurrentOrder(undefined);
+  };
+
   useEffect(() => {
     if (!config) return;
     setMinimumPizzaTime(config.minimumPizzaTime);
@@ -112,6 +116,7 @@ const Simulator = () => {
             pizzaStagesTimeCoeffs={pizzaStagesTimeCoeffs}
             minimumPizzaTime={minimumPizzaTime}
             menu={menu}
+            onClose={handleModalClose}
           />
         }
       </div>

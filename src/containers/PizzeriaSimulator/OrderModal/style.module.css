@@ -1,15 +1,17 @@
 .root {
-  min-height: 100vh;
   display: grid;
   place-items: center;
   background-color: hsla(0, 0%, 0%, 0.5);
   color: hsl(93, 12%, 29%);
+  z-index: 100;
+  position: absolute;
+  inset: 0;
 }
 
 .modal {
   background-color: var(--table-background-color);
-  max-width: 45rem;
-  max-height: 60rem;
+  max-width: 40rem;
+  max-height: 50rem;
   padding: 1.5rem 2.25rem;
   width: 100%;
   border-radius: 1.25rem;

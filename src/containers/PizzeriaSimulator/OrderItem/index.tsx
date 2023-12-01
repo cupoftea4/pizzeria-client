@@ -6,7 +6,8 @@ import RightPolygon from '@/icons/RightPolygon';
 type OwnProps = {
   pizza?: PizzaRecipe
   pizzaId: number
-  cookName: string
+  pizzaCount: number
+  cookName: string | null
   stage: CookingStage | 'None'
   minimumPizzaTime: number
   pizzaStagesTimeCoeffs: Record<CookingStage, number>
@@ -17,6 +18,7 @@ type OwnProps = {
 const OrderItem = ({
   pizza,
   pizzaId,
+  pizzaCount,
   cookName,
   stage,
   minimumPizzaTime,
@@ -45,21 +47,23 @@ const OrderItem = ({
         </div>
         <p><strong>Minimum preparation time: </strong>{pizzaTime}</p>
       </div>
-      <div className={style.table}>
-        <div className={style.row}>
-          <div className={style.columnHeader}>Cook name</div>
-          <div className={style.columnHeader}>Status</div>
+      {cookName &&
+        <div className={style.table}>
+          <div className={style.row}>
+            <div className={style.columnHeader}>Cook name</div>
+            <div className={style.columnHeader}>Status</div>
+          </div>
+          <div className={style.row}>
+            <div>{cookName}</div>
+            <div>{stage}</div>
+          </div>
         </div>
-        <div className={style.row}>
-          <div>{cookName}</div>
-          <div>{stage}</div>
-        </div>
-      </div>
+      }
       <div className={style.buttons}>
         <button onClick={onLeftClick}>
           <LeftPolygon />
         </button>
-        <p>{pizzaId}</p>
+        <p>{pizzaId}/{pizzaCount}</p>
         <button onClick={onRightClick}>
           <RightPolygon />
         </button>
