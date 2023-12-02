@@ -52,7 +52,7 @@ const CooksTable = ({
           </div>
           {
             Object.entries(cooks).map(([cookId, cook]) => {
-              const order = cook.orderId ? orders[cook.orderId] : null;
+              const order = cook.orderId !== null ? orders[cook.orderId] : null;
               const orderPizza = order?.orderPizzas?.find(p => p.id === cook.orderPizzaId);
 
               return (<div key={`${cookId}`} className={style.row}>
