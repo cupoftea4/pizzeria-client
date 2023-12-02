@@ -38,7 +38,7 @@ const CooksTable = ({
 
   return (
     <div className={style.root}>
-      <div className={style['table-header']}>
+      <div className={style['cooks-header']}>
         <button onClick={toggleTable}>
           {showTable ? <UpArrow /> : <DownArrow />}
         </button>
@@ -46,7 +46,7 @@ const CooksTable = ({
       </div>
       {showTable && (
         <div className={style.table}>
-          <div className={style.row}>
+          <div className={`${style.row} ${style['table-header']}`}>
             <div className={style.columnHeader}>Cook name (specialization)</div>
             <div className={style.columnHeader}>Order</div>
             <div className={style.columnHeader}>Stage</div>
