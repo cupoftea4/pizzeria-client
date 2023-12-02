@@ -14,9 +14,25 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
   const [showTable, setShowTable] = useState(false);
   const [elapsedTimes, setElapsedTimes] = useState<Record<number, number>>({});
   const [orderColors, setOrderColors] = useState<Record<number, string>>({});
+  const [showCompleted, setShowCompleted] = useState(false);
+  const [visibleOrders, setVisibleOrders] = useState<Record<number, Order>>(orders);
 
   const toggleTable = () => {
     setShowTable(!showTable);
+  };
+
+  const toggleCompleted = () => {
+    setShowCompleted(!showCompleted);
+    if (showCompleted) {
+      setVisibleOrders(orders);
+    } else {
+      setVisibleOrders(Object.values(orders)
+        .filter(order => order.orderPizzas.some(orderPizza => !orderPizza.completedAt))
+        .reduce<Record<number, Order>>((acc, order) => {
+        acc[order.id] = order;
+        return acc;
+      }, {}));
+    }
   };
 
   const generateRowColor = () => {
@@ -53,6 +69,11 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
           {showTable ? <DownArrow /> : <UpArrow />}
         </button>
         <h2>Orders</h2>
+        {showTable && (
+          <button className={style['completed-button']} onClick={toggleCompleted}>
+            {showCompleted ? 'Show Completed' : 'Hide Completed'}
+          </button>
+        )}
       </div>
       {showTable && (
         <div className={style.table}>
@@ -62,8 +83,9 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
             <div className={style.columnHeader}>Item</div>
             <div className={style.columnHeader}>Status</div>
           </div>
+          <div className={style['order-table']}>
           {
-            Object.values(orders).sort((o1, o2) => o2.id - o1.id).map((order) => {
+            Object.values(visibleOrders).sort((o1, o2) => o2.id - o1.id).map((order) => {
               const rowBackgroundColor = orderColors[order.id] ?? generateRowColor();
               if (!orderColors[order.id]) {
                 setOrderColors((prev) => ({
@@ -75,23 +97,23 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
               return (
                 order.orderPizzas?.map((orderPizza) => {
                   return (
-                  <div
-                    key={`${order.id}.${orderPizza.id}`}
-                    className={style.row}
-                    style={{ backgroundColor: rowBackgroundColor }}
-                    onClick={() => onOrderClick(order)}
-                  >
-                    <div>{`${order.id}.${orderPizza.id}`}</div>
-                    <div>{order.diner.name}</div>
-                    <div>{menu.find(p => p.id === orderPizza.recipeId)?.name}</div>
-                    <div>{`${orderPizza.currentStage ?? 'N/A'} (${
-                      elapsedTimes[orderPizza.id] ?? 'N/A'
-                    }s)`}</div>
-                  </div>
+                    <div
+                      key={`${order.id}.${orderPizza.id}`}
+                      className={style.row}
+                      style={{ backgroundColor: rowBackgroundColor }}
+                      onClick={() => onOrderClick(order)}
+                    >
+                      <div>{`${order.id}.${orderPizza.id}`}</div>
+                      <div>{order.diner.name}</div>
+                      <div>{menu.find(p => p.id === orderPizza.recipeId)?.name}</div>
+                      <div>{`${orderPizza.currentStage ?? 'N/A'} (${elapsedTimes[orderPizza.id] ?? 'N/A'
+                        }s)`}</div>
+                    </div>
                   );
                 }));
             })
           }
+          </div>
         </div>
       )}
     </div>
