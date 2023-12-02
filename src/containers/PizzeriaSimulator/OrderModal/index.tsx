@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import style from './style.module.css';
 import OrderItem from '@/containers/PizzeriaSimulator/OrderItem';
-import type { Cook, CookingStage, Order, PizzaRecipe } from '@/types/types';
+import type { Cook, Order, PizzaRecipe, TimedCookingStageToValue } from '@/types/types';
 
 type OwnProps = {
   cooks: Record<number, Cook>
   order: Order
   minimumPizzaTime: number
-  pizzaStagesTimeCoeffs?: Record<CookingStage, number>
+  pizzaStagesTimeCoeffs?: TimedCookingStageToValue
   menu: PizzaRecipe[]
   onClose: () => void
 };
@@ -20,8 +20,7 @@ const OrderModal = ({
     Dough: 0.3,
     Topping: 0.2,
     Baking: 0.4,
-    Packaging: 0.1,
-    Completed: 0
+    Packaging: 0.1
   },
   menu,
   onClose
@@ -54,14 +53,19 @@ const OrderModal = ({
     setCurrentPizzaIndex(0);
   }, []);
 
+  const updateCountedTime = useCallback(() => {
+    const elapsedTime = Date.now() - new Date(order.createdAt).getTime();
+    setCountedTime(Math.floor(elapsedTime / 1000));
+  }, [order.createdAt]);
+
   useEffect(() => {
+    updateCountedTime();
     const interval = setInterval(() => {
-      const elapsedTime = Date.now() - new Date(order.createdAt).getTime();
-      setCountedTime(Math.floor(elapsedTime / 1000));
+      updateCountedTime();
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [order.createdAt]);
+  }, [updateCountedTime]);
 
   return (
     <div className={style.root} onClick={onClose}>

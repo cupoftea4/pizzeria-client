@@ -73,18 +73,18 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
               }
 
               return (
-                order.orderPizzas?.map((orderPizza, index) => {
+                order.orderPizzas?.map((orderPizza) => {
                   return (
                   <div
-                    key={`${order.id}.${index + 1}`}
+                    key={`${order.id}.${orderPizza.id}`}
                     className={style.row}
                     style={{ backgroundColor: rowBackgroundColor }}
                     onClick={() => onOrderClick(order)}
                   >
-                    <div>{`${order.id}.${index + 1}`}</div>
+                    <div>{`${order.id}.${orderPizza.id}`}</div>
                     <div>{order.diner.name}</div>
                     <div>{menu.find(p => p.id === orderPizza.recipeId)?.name}</div>
-                    <div>{`${orderPizza.currentStage ?? 'Waiting'} (${
+                    <div>{`${orderPizza.currentStage ?? 'N/A'} (${
                       elapsedTimes[orderPizza.id] ?? 'N/A'
                     }s)`}</div>
                   </div>

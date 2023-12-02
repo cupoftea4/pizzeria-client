@@ -1,11 +1,11 @@
-import type { CookingStage, CooksMode } from '@/types/types';
+import type { CooksMode, TimedCookingStageToValue } from '@/types/types';
 import style from './style.module.css';
 import Input from '@/components/Input';
 
 type OwnProps = {
   cooksModeState: [CooksMode, (cooksMode: CooksMode) => void]
   cooksNumberState: [number, (cooksNumber: number) => void]
-  cooksNumberPerStageState: [Record<CookingStage, number>, (cooksNumberPerStage: Record<CookingStage, number>) => void]
+  cooksNumberPerStageState: [TimedCookingStageToValue, (cooksNumberPerStage: TimedCookingStageToValue) => void]
 };
 
 const CooksModeChoice = ({ cooksModeState, cooksNumberState, cooksNumberPerStageState }: OwnProps) => {

@@ -32,7 +32,7 @@
 
 .row {
   display: grid;
-  grid-template-columns: 1.5fr 3fr 1.5fr 1fr;
+  grid-template-columns: 2fr 2fr 1.325fr .5fr;
   border-bottom: 1px solid #000;
 }
 

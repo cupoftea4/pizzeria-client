@@ -2,10 +2,10 @@ import type { CookingOrderUpdateMessage } from '@/hooks/useEventSubscribtion';
 import type { Cook, Order } from '@/types/types';
 
 export function mergeUpdateIntoOrder(order: Order, update: CookingOrderUpdateMessage): Order {
-  return {
+  const res = {
     ...order,
     orderPizzas: [...order.orderPizzas.map(
-      p => p.id !== update.orderId
+      p => p.id !== update.orderPizzaId
         ? p
         : {
           ...p,
@@ -15,14 +15,15 @@ export function mergeUpdateIntoOrder(order: Order, update: CookingOrderUpdateMes
         } satisfies typeof p
     )]
   };
+  return res;
 }
 
 export function mergeUpdateIntoCook(cook: Cook, update: CookingOrderUpdateMessage): Cook {
-  if (update.currentStage === null) {
+  if (update.currentStage === null || update.currentStage === 'Waiting' || update.currentStage === 'Completed') {
     return {
       ...cook,
-      orderId: undefined,
-      orderPizzaId: undefined,
+      orderId: null,
+      orderPizzaId: null,
       status: cook.status === 'BUSY' ? 'FREE' : cook.status
     } satisfies Cook;
   }

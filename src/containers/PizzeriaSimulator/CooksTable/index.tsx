@@ -45,25 +45,27 @@ const CooksTable = ({
       {showTable && (
         <div className={style.table}>
           <div className={style.row}>
-            <div className={style.columnHeader}>Cook name</div>
+            <div className={style.columnHeader}>Cook name (specialization)</div>
             <div className={style.columnHeader}>Order</div>
             <div className={style.columnHeader}>Stage</div>
             <div className={style.columnHeader}>State</div>
           </div>
           {
             Object.entries(cooks).map(([cookId, cook]) => {
-              const order = cook.orderId ? orders[cook.orderId] : null;
+              const order = cook.orderId !== null ? orders[cook.orderId] : null;
               const orderPizza = order?.orderPizzas?.find(p => p.id === cook.orderPizzaId);
 
               return (<div key={`${cookId}`} className={style.row}>
-                <div>{cook.name}</div>
+                <div>{`${cook.name} ${cook.specialization ? `(${cook.specialization})` : ''}`}</div>
                 {order
                   ? <div>{
                       `#${order?.id}.${orderPizza?.id}
                       (${menu.find(p => p.id === orderPizza?.recipeId)?.name})`
                     }</div>
                   : <div>Free</div>}
-                <div>{orderPizza?.currentStage}</div>
+                <div>{`${orderPizza?.currentStage ?? ''} ${
+                  orderPizza?.currentStage === 'Topping' ? `(${orderPizza?.currentTopping})` : ''
+                }`}</div>
                   <div>
                     <button className={style['cook-state-button']} onClick={() => handleCookStateChange(cook)}>
                       {cook.status === 'PAUSED' ? <PlayIcon /> : <StopIcon />}

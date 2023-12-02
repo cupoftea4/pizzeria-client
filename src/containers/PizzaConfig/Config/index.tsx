@@ -22,6 +22,10 @@ const Config = () => {
   useEffect(() => {
     if (config) {
       setLocalConfig({ ...config, menu: config.menu.map(pizza => pizza.id) });
+      // BUTT PLUG: move this to the backend 🔽
+      if (config.menu.length === 0) {
+        updateLocalConfig('menu', [1, 2, 3]);
+      }
     }
   }, [config]);
 
@@ -35,14 +39,14 @@ const Config = () => {
     }
   };
 
-  const updateLocalConfig = <Key extends keyof ConfigDataSaveDto>(key: Key, value: ConfigDataSaveDto[Key]) => {
+  function updateLocalConfig<Key extends keyof ConfigDataSaveDto>(key: Key, value: ConfigDataSaveDto[Key]) {
     setLocalConfig((prevConfig) => {
       return {
         ...prevConfig!,
         [key]: value
       };
     });
-  };
+  }
 
   if (!localConfig) return <div className={style.loading}>Loading...</div>;
   if (configError || simulationError) return <div>{configError ?? simulationError}</div>;
@@ -52,7 +56,7 @@ const Config = () => {
         ? (
           <PizzaModal
             selectedPizzaIds={localConfig.menu}
-            addPizzaToSelected={(id) => updateLocalConfig('menu', [...(localConfig.menu), id])}
+            addPizzaToSelected={(...ids) => updateLocalConfig('menu', [...(localConfig.menu), ...ids])}
             removePizzaFromSelected={(pizza) => updateLocalConfig(
               'menu',
               localConfig.menu.filter((id) => id !== pizza)
