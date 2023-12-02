@@ -63,7 +63,9 @@ const CooksTable = ({
                       (${menu.find(p => p.id === orderPizza?.recipeId)?.name})`
                     }</div>
                   : <div>Free</div>}
-                <div>{orderPizza?.currentStage}</div>
+                <div>{`${orderPizza?.currentStage ?? ''} ${
+                  orderPizza?.currentStage === 'Topping' ? `(${orderPizza?.currentTopping})` : ''
+                }`}</div>
                   <div>
                     <button className={style['cook-state-button']} onClick={() => handleCookStateChange(cook)}>
                       {cook.status === 'PAUSED' ? <PlayIcon /> : <StopIcon />}

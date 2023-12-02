@@ -2,7 +2,7 @@ import style from './style.module.css';
 import PizzeriaBackground from '../PizzeriaBackground';
 import OrdersTable from '../OrdersTable';
 import { useCallback, useEffect, useState } from 'react';
-import type { Cook, CookStatus, CookingStage, Order, PizzaRecipe } from '@/types/types';
+import type { Cook, CookingStage, Order, PizzaRecipe } from '@/types/types';
 import OrderModal from '../OrderModal';
 import CooksTable from '../CooksTable';
 import { useConfig } from '@/hooks/useConfig';
@@ -54,15 +54,12 @@ const Simulator = () => {
       console.warn('PAUSED COOK UPDATE', update);
       const updatedCook = cooks[update.cookId];
       if (!updatedCook) {
+        console.error('Cook not found', update.cookId);
         return cooks;
-      }
-      let newStatus: CookStatus = updatedCook.orderId !== undefined ? 'BUSY' : 'FREE'; // assuming it was paused before
-      if (updatedCook.status !== 'PAUSED') {
-        newStatus = 'PAUSED';
       }
       return {
         ...cooks,
-        [update.cookId]: { ...updatedCook, status: newStatus }
+        [update.cookId]: { ...updatedCook, status: update.cookStatus }
       };
     });
   }, []);
@@ -72,13 +69,7 @@ const Simulator = () => {
   usePausedCookUpdateSubscription(handlePausedCookUpdate);
 
   const [currentOrder, setCurrentOrder] = useState<Order>();
-  const [pizzaStagesTimeCoeffs, setPizzaStagesTimeCoeffs] = useState<Record<CookingStage, number>>({
-    Topping: 0,
-    Dough: 0,
-    Baking: 0,
-    Packaging: 0,
-    Completed: 0
-  });
+  const [pizzaStagesTimeCoeffs, setPizzaStagesTimeCoeffs] = useState<Record<CookingStage, number>>();
 
   const handleModalClose = () => {
     setCurrentOrder(undefined);

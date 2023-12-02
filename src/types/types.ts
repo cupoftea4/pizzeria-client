@@ -1,5 +1,5 @@
 export type CooksMode = 'none' | 'specialized' | 'universal';
-export type CookingStage = 'Baking' | 'Dough' | 'Packaging' | 'Topping' | 'Completed';
+export type CookingStage = 'Baking' | 'Dough' | 'Packaging' | 'Topping' | 'Completed' | 'Waiting';
 export type Frequency = 'Low' | 'Medium' | 'High';
 
 export type PizzaRecipe = {
@@ -32,8 +32,8 @@ export type Cook = {
   name: string
   specialization: CookingStage | null
   status: CookStatus
-  orderId?: number
-  orderPizzaId?: number
+  orderId: number | null
+  orderPizzaId: number | null
 };
 
 export type Order = {

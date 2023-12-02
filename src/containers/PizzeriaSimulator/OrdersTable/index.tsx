@@ -84,7 +84,7 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
                     <div>{`${order.id}.${orderPizza.id}`}</div>
                     <div>{order.diner.name}</div>
                     <div>{menu.find(p => p.id === orderPizza.recipeId)?.name}</div>
-                    <div>{`${orderPizza.currentStage ?? 'Waiting'} (${
+                    <div>{`${orderPizza.currentStage ?? 'N/A'} (${
                       elapsedTimes[orderPizza.id] ?? 'N/A'
                     }s)`}</div>
                   </div>
