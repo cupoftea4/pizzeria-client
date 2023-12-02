@@ -7,6 +7,7 @@ import type { Cook, Order, PizzaRecipe } from '@/types/types';
 import StopIcon from '@/icons/StopIcon';
 import PlayIcon from '@/icons/PlayIcon';
 import { useCookControl } from '@/hooks/useCookControl';
+import { toast } from 'react-toastify';
 
 type OwnProps = {
   cooks: Record<number, Cook>
@@ -29,6 +30,7 @@ const CooksTable = ({
   const handleCookStateChange = (cook: Cook) => {
     if (cook.status === 'BUSY') {
       pauseCook(cook.id);
+      toast.info('The cook is paused, but he must first finish the order he is working on');
     } else {
       resumeCook(cook.id);
     }

@@ -16,11 +16,12 @@ import {
 } from '@/hooks/useEventSubscribtion';
 import { mergeUpdateIntoCook, mergeUpdateIntoOrder } from '@/utils/orders';
 import { arrayToObject } from '@/utils/object';
+import { toast } from 'react-toastify';
 
 const Simulator = () => {
   const { config, error: configError } = useConfig();
   const { kitchenState, error: kitchenStateError } = useKitchenState();
-  const [orders, setOrders] = useState<Record<number, Order>>([]);
+  const [orders, setOrders] = useState<Record<number, Order>>({});
   const [cooks, setCooks] = useState<Record<number, Cook>>({});
   const [minimumPizzaTime, setMinimumPizzaTime] = useState(123);
   const [menu, setMenu] = useState<PizzaRecipe[]>([]);
@@ -95,7 +96,16 @@ const Simulator = () => {
     setOrders(arrayToObject(kitchenState.orders, 'id'));
   }, [kitchenState]);
 
-  if (kitchenStateError || configError) return <div>{kitchenStateError ?? configError}</div>;
+  useEffect(() => {
+    if (!kitchenStateError) return;
+    toast.error(kitchenStateError);
+  }, [kitchenStateError]);
+
+  useEffect(() => {
+    if (!configError) return;
+    toast.error(configError);
+  }, [configError]);
+
   return (
       <div className={style.root}>
         <PizzeriaBackground/>

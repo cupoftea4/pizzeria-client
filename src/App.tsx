@@ -3,6 +3,8 @@ import Config from './containers/PizzaConfig/Config';
 import Simulator from './containers/PizzeriaSimulator/Simulator';
 import './styles/_variables.css';
 import { WebSocketProvider } from './context/websocket';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   return (
@@ -15,6 +17,9 @@ const App = () => {
           </Routes>
         </Router>
       </WebSocketProvider>
+      <ToastContainer
+        position="top-center" theme="colored" pauseOnFocusLoss={false} autoClose={5000}
+      />
     </>
   );
 };
