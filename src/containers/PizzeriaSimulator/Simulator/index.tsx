@@ -36,14 +36,19 @@ const Simulator = () => {
     console.warn('ORDER UPDATE', update);
     setOrders(orders => {
       const orderToUpdate = orders[update.orderId];
-      if (!orderToUpdate) return orders;
+      if (!orderToUpdate) {
+        console.error('UPDATE: Can`t find order', update.orderId, orders);
+        return orders;
+      }
       return { ...orders, [update.orderId]: mergeUpdateIntoOrder(orderToUpdate, update) };
     });
 
     setCooks(cooks => {
-      if (update.cookId === null) return cooks;
       const cookToUpdate = cooks[update.cookId];
-      if (!cookToUpdate) return cooks;
+      if (!cookToUpdate) {
+        console.error('UPDATE: Can`t find cook', update.cookId, cooks);
+        return cooks;
+      }
       return {
         ...cooks,
         [update.cookId]: mergeUpdateIntoCook(cookToUpdate, update)
@@ -56,7 +61,7 @@ const Simulator = () => {
       console.warn('PAUSED COOK UPDATE', update);
       const updatedCook = cooks[update.cookId];
       if (!updatedCook) {
-        console.error('Cook not found', update.cookId);
+        console.error('COOK: Can`t find cook', update.cookId);
         return cooks;
       }
       return {

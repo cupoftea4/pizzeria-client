@@ -56,7 +56,7 @@ const CooksTable = ({
               const orderPizza = order?.orderPizzas?.find(p => p.id === cook.orderPizzaId);
 
               return (<div key={`${cookId}`} className={style.row}>
-                <div>{`${cook.name} ${cook.specialization && `(${cook.specialization})`}`}</div>
+                <div>{`${cook.name} ${cook.specialization ? `(${cook.specialization})` : ''}`}</div>
                 {order
                   ? <div>{
                       `#${order?.id}.${orderPizza?.id}

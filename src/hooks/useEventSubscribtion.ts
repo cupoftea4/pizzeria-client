@@ -19,7 +19,7 @@ type NewOrderMessage = {
 export type CookingOrderUpdateMessage = {
   currentStage: CookingStage
   currentTopping?: string
-  cookId: number | null
+  cookId: number
   orderId: number
   orderPizzaId: number
   completedAt: string | null
