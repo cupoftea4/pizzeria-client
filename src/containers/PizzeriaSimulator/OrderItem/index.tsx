@@ -1,6 +1,6 @@
 import LeftPolygon from '@/icons/LeftPolygon';
 import style from './style.module.css';
-import type { PizzaRecipe, CookingStage } from '@/types/types';
+import type { PizzaRecipe, CookingStage, TimedCookingStageToValue } from '@/types/types';
 import RightPolygon from '@/icons/RightPolygon';
 
 type OwnProps = {
@@ -10,7 +10,7 @@ type OwnProps = {
   cookName: string | null
   stage: CookingStage | 'None'
   minimumPizzaTime: number
-  pizzaStagesTimeCoeffs: Record<CookingStage, number>
+  pizzaStagesTimeCoeffs: TimedCookingStageToValue
   onLeftClick: () => void
   onRightClick: () => void
 };

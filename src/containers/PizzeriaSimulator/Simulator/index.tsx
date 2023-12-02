@@ -2,7 +2,7 @@ import style from './style.module.css';
 import PizzeriaBackground from '../PizzeriaBackground';
 import OrdersTable from '../OrdersTable';
 import { useCallback, useEffect, useState } from 'react';
-import type { Cook, CookingStage, Order, PizzaRecipe } from '@/types/types';
+import type { Cook, Order, PizzaRecipe, TimedCookingStageToValue } from '@/types/types';
 import OrderModal from '../OrderModal';
 import CooksTable from '../CooksTable';
 import { useConfig } from '@/hooks/useConfig';
@@ -27,6 +27,8 @@ const Simulator = () => {
 
   const handleNewOrderUpdate = useCallback((order: Order) => {
     console.warn('NEW ORDER', order);
+    // BUTT PLUG
+    order.orderPizzas.forEach(pizza => { pizza.currentStage = 'Waiting'; });
     setOrders(orders => ({ ...orders, [order.id]: order }));
   }, []);
 
@@ -69,7 +71,7 @@ const Simulator = () => {
   usePausedCookUpdateSubscription(handlePausedCookUpdate);
 
   const [currentOrder, setCurrentOrder] = useState<Order>();
-  const [pizzaStagesTimeCoeffs, setPizzaStagesTimeCoeffs] = useState<Record<CookingStage, number>>();
+  const [pizzaStagesTimeCoeffs, setPizzaStagesTimeCoeffs] = useState<TimedCookingStageToValue>();
 
   const handleModalClose = () => {
     setCurrentOrder(undefined);

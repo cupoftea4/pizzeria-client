@@ -1,5 +1,6 @@
 export type CooksMode = 'none' | 'specialized' | 'universal';
 export type CookingStage = 'Baking' | 'Dough' | 'Packaging' | 'Topping' | 'Completed' | 'Waiting';
+export type TimedCookingStageToValue<T = number> = Omit<Record<CookingStage, T>, 'Waiting' | 'Completed'>;
 export type Frequency = 'Low' | 'Medium' | 'High';
 
 export type PizzaRecipe = {
@@ -12,14 +13,14 @@ export type PizzaRecipe = {
 export type ConfigData = {
   cashRegisterQuantity: number
   cooksNumber: number
-  cooksPerStage: Record<CookingStage, number>
+  cooksPerStage: TimedCookingStageToValue
   dinerArrivalConfig: {
     frequency: Frequency
     quantity: number
   }
   menu: PizzaRecipe[]
   minimumPizzaTime: number
-  pizzaStagesTimeCoeffs: Record<CookingStage, number>
+  pizzaStagesTimeCoeffs: TimedCookingStageToValue
   specializedCooksMode: boolean
 };
 
