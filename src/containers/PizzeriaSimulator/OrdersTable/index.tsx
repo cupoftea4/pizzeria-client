@@ -16,6 +16,7 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
   const [orderColors, setOrderColors] = useState<Record<number, string>>({});
   const [showCompleted, setShowCompleted] = useState(false);
   const [visibleOrders, setVisibleOrders] = useState<Record<number, Order>>(orders);
+  const [completedOrders, setCompletedOrders] = useState<number>(0);
 
   const toggleTable = () => {
     setShowTable(!showTable);
@@ -62,6 +63,15 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
     };
   }, [orders]);
 
+  useEffect(() => {
+    setCompletedOrders(
+      Object.values(orders).filter(order => order.orderPizzas.every(orderPizza => orderPizza.completedAt)).length);
+  }, [orders]);
+
+  useEffect(() => {
+    setVisibleOrders(orders);
+  }, []);
+
   return (
     <div className={style.root}>
       <div className={style['orders-header']}>
@@ -71,7 +81,7 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
         <h2>Orders</h2>
         {showTable && (
           <button className={style['completed-button']} onClick={toggleCompleted}>
-            {showCompleted ? 'Show Completed' : 'Hide Completed'}
+            {showCompleted ? `Show Completed ${completedOrders}` : `Hide Completed ${completedOrders}`}
           </button>
         )}
       </div>
