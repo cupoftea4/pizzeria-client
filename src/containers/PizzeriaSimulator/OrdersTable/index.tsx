@@ -70,7 +70,7 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
 
   useEffect(() => {
     setVisibleOrders(orders);
-  }, []);
+  }, [orders]);
 
   return (
     <div className={style.root}>
@@ -93,7 +93,6 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
             <div className={style.columnHeader}>Item</div>
             <div className={style.columnHeader}>Status</div>
           </div>
-          <div className={style['order-table']}>
           {
             Object.values(visibleOrders).sort((o1, o2) => o2.id - o1.id).map((order) => {
               const rowBackgroundColor = orderColors[order.id] ?? generateRowColor();
@@ -124,7 +123,6 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
             })
           }
           </div>
-        </div>
       )}
     </div>
   );

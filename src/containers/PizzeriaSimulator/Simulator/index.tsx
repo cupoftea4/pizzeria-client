@@ -13,7 +13,7 @@ import {
   usePausedCookUpdateSubscription,
   type CookingOrderUpdateMessage,
   type PausedCookUpdateMessage
-} from '@/hooks/useEventSubscribtion';
+} from '@/hooks/useEventSubscribtion'; // spell issue
 import { mergeUpdateIntoCook, mergeUpdateIntoOrder } from '@/utils/orders';
 import { arrayToObject } from '@/utils/object';
 import { toast } from 'react-toastify';
