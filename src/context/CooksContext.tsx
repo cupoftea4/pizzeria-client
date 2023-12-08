@@ -2,16 +2,20 @@ import { CanvasCook } from '@/types/canvasCook';
 import type { Cook, CookingStage } from '@/types/types';
 import React, { createContext, useState, useContext, useCallback } from 'react';
 
-type CooksContextType = {
+type KitchenContextType = {
   cooks: CanvasCook[]
+  completedOrdersNumber: number
   notifyCookUpdate: (cookId: number, newStage: CookingStage) => void
   setInitialCooks: (cooks: Record<CookingStage, Cook[]>) => void
+  notifyCompletedOrder: () => void
+  setInitialCompletedOrders: (numberOfCompletedOrders: number) => void
 };
 
-const CooksContext = createContext<CooksContextType | undefined>(undefined);
+const KitchenContext = createContext<KitchenContextType | undefined>(undefined);
 
 export const CooksProvider = ({ children }: { children: React.ReactNode }) => {
   const [cooks, setCooks] = useState<CanvasCook[]>([]); // Initial cooks state
+  const [numberOfCompletedOrders, setNumberOfCompletedOrders] = useState(0); // Initial cooks state
 
   const updateCook = useCallback((cookId: number, newStage: CookingStage) => {
     setCooks(prevCooks => {
@@ -30,15 +34,30 @@ export const CooksProvider = ({ children }: { children: React.ReactNode }) => {
     ).flat().sort(sortByStage));
   }, []);
 
+  const addCompletedOrder = useCallback(() => {
+    setNumberOfCompletedOrders(prev => prev + 1);
+  }, []);
+
+  const setInitialCompletedOrders = useCallback((numberOfCompletedOrders: number) => {
+    setNumberOfCompletedOrders(numberOfCompletedOrders);
+  }, []);
+
   return (
-    <CooksContext.Provider value={{ cooks, notifyCookUpdate: updateCook, setInitialCooks }}>
+    <KitchenContext.Provider value={{
+      cooks,
+      notifyCookUpdate: updateCook,
+      setInitialCooks,
+      completedOrdersNumber: numberOfCompletedOrders,
+      notifyCompletedOrder: addCompletedOrder,
+      setInitialCompletedOrders
+    }}>
       {children}
-    </CooksContext.Provider>
+    </KitchenContext.Provider>
   );
 };
 
-export const useCooks = () => {
-  const context = useContext(CooksContext);
+export const useKitchenVisualization = () => {
+  const context = useContext(KitchenContext);
   if (context === undefined) {
     throw new Error('useCooks must be used within a CooksProvider');
   }

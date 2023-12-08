@@ -18,7 +18,7 @@ import {
 import { mergeUpdateIntoCook, mergeUpdateIntoOrder } from '@/utils/orders';
 import { arrayToObject } from '@/utils/object';
 import { toast } from 'react-toastify';
-import { useCooks } from '@/context/CooksContext';
+import { useKitchenVisualization } from '@/context/CooksContext';
 
 const Simulator = () => {
   const { config, error: configError } = useConfig();
@@ -29,7 +29,9 @@ const Simulator = () => {
   const [menu, setMenu] = useState<PizzaRecipe[]>([]);
   const [diners, setDiners] = useState<Record<number, Set<number>>>({}); // cashRegisterId -> dinersNumber
 
-  const { notifyCookUpdate, setInitialCooks } = useCooks();
+  const {
+    notifyCookUpdate, setInitialCooks, notifyCompletedOrder, setInitialCompletedOrders
+  } = useKitchenVisualization();
 
   const handleNewOrderUpdate = useCallback((order: Order) => {
     console.warn('NEW ORDER', order);
@@ -58,6 +60,7 @@ const Simulator = () => {
       const registerId = orderToUpdate.cashRegisterId;
       if (update.currentStage === 'Completed') {
         console.log(`Removing diner from ${registerId}`);
+        notifyCompletedOrder();
         setDiners(prevDiners => {
           prevDiners[registerId]?.delete(update.orderId);
           return { ...prevDiners, [registerId]: prevDiners[registerId] ?? new Set<number>() };
@@ -78,7 +81,7 @@ const Simulator = () => {
         [update.cookId]: mergeUpdateIntoCook(cookToUpdate, update)
       };
     });
-  }, [notifyCookUpdate]);
+  }, [notifyCompletedOrder, notifyCookUpdate]);
 
   const handlePausedCookUpdate = useCallback((update: PausedCookUpdateMessage) => {
     setCooks(cooks => {
@@ -137,6 +140,12 @@ const Simulator = () => {
         return acc;
       }, {})
     );
+    setInitialCompletedOrders(kitchenState.orders.reduce((acc, order) => {
+      return order.orderPizzas.reduce((acc, pizza) => {
+        if (pizza.currentStage === 'Completed') acc++;
+        return acc;
+      }, acc);
+    }, 0));
     setOrders(orders);
     setDiners(kitchenState.orders.reduce<Record<number, Set<number>>>((acc, order) => {
       if (order.orderPizzas.some(pizza => pizza.currentStage !== 'Completed')) {
@@ -146,7 +155,7 @@ const Simulator = () => {
       }
       return acc;
     }, {}));
-  }, [kitchenState, setInitialCooks]);
+  }, [kitchenState, setInitialCompletedOrders, setInitialCooks]);
 
   useEffect(() => {
     if (!kitchenStateError) return;
