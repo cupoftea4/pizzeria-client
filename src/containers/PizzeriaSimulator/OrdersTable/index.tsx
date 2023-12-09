@@ -24,16 +24,6 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
 
   const toggleCompleted = () => {
     setShowCompleted(!showCompleted);
-    if (showCompleted) {
-      setVisibleOrders(orders);
-    } else {
-      setVisibleOrders(Object.values(orders)
-        .filter(order => order.orderPizzas.some(orderPizza => !orderPizza.completedAt))
-        .reduce<Record<number, Order>>((acc, order) => {
-        acc[order.id] = order;
-        return acc;
-      }, {}));
-    }
   };
 
   const generateRowColor = () => {
@@ -69,8 +59,17 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
   }, [orders]);
 
   useEffect(() => {
-    setVisibleOrders(orders);
-  }, [orders]);
+    if (showCompleted) {
+      setVisibleOrders(orders);
+    } else {
+      setVisibleOrders(Object.values(orders)
+        .filter(order => order.orderPizzas.some(orderPizza => !orderPizza.completedAt))
+        .reduce<Record<number, Order>>((acc, order) => {
+        acc[order.id] = order;
+        return acc;
+      }, {}));
+    }
+  }, [orders, showCompleted]);
 
   return (
     <div className={style.root}>
@@ -81,7 +80,7 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
         <h2>Orders</h2>
         {showTable && (
           <button className={style['completed-button']} onClick={toggleCompleted}>
-            {showCompleted ? `Show Completed ${completedOrders}` : `Hide Completed ${completedOrders}`}
+            {showCompleted ? `Hide Completed ${completedOrders}` : `Show Completed ${completedOrders}`}
           </button>
         )}
       </div>

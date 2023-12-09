@@ -26,6 +26,7 @@
   max-height: 20rem;
   display: grid;
   width: 100%;
+  overflow: auto;
 }
 
 .order-table {
