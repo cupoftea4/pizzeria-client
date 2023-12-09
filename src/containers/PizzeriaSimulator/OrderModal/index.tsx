@@ -45,6 +45,24 @@ const OrderModal = ({
     }
   };
 
+  const countTimeForPizza = (pizza: PizzaRecipe | undefined) => {
+    return Math.round(
+      minimumPizzaTime * pizzaStagesTimeCoeffs.Dough +
+      (minimumPizzaTime * pizzaStagesTimeCoeffs.Topping) * (pizza?.toppings.length ?? 0) +
+      minimumPizzaTime * pizzaStagesTimeCoeffs.Baking +
+      minimumPizzaTime * pizzaStagesTimeCoeffs.Packaging);
+  };
+
+  const estimatedTime = () => {
+    let time = 0;
+    order.orderPizzas.forEach((orderPizza) => {
+      if (countTimeForPizza(menu.find(recipe => recipe.id === orderPizza.recipeId)) > time) {
+        time = countTimeForPizza(menu.find(recipe => recipe.id === orderPizza.recipeId));
+      }
+    });
+    return time;
+  };
+
   useEffect(() => {
     setCooksOnThisOrder(Object.values(cooks).filter(cook => cook.orderId === order.id));
   }, [cooks, order.id]);
@@ -54,9 +72,24 @@ const OrderModal = ({
   }, []);
 
   const updateCountedTime = useCallback(() => {
-    const elapsedTime = Date.now() - new Date(order.createdAt).getTime();
+    const isOrderCompleted = () => {
+      return order.orderPizzas.every(pizza => pizza.completedAt !== null);
+    };
+
+    let elapsedTime = Date.now() - new Date(order.createdAt).getTime();
+
+    if (isOrderCompleted()) {
+      let endTime = 0;
+      order.orderPizzas.forEach((orderPizza) => {
+        if (new Date(orderPizza.completedAt ?? 0).getTime() > endTime) {
+          endTime = new Date(orderPizza.completedAt ?? 0).getTime();
+        }
+      });
+      elapsedTime = endTime - new Date(order.createdAt).getTime();
+    }
+
     setCountedTime(Math.floor(elapsedTime / 1000));
-  }, [order.createdAt]);
+  }, [order.createdAt, order.orderPizzas]);
 
   useEffect(() => {
     updateCountedTime();
@@ -74,6 +107,7 @@ const OrderModal = ({
         <div className={style.text}>
           <p><strong>Dinner name: </strong>{order.diner.name}</p>
           <p><strong>Cooking duration: </strong>{countedTime}s</p>
+          <p><strong>Estimated cooking duration: </strong>{estimatedTime()}s</p>
         </div>
         <div className={style.order}>
           <p className={style['order-items']}>Order items</p>

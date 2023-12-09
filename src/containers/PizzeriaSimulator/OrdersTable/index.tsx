@@ -14,9 +14,16 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
   const [showTable, setShowTable] = useState(false);
   const [elapsedTimes, setElapsedTimes] = useState<Record<number, number>>({});
   const [orderColors, setOrderColors] = useState<Record<number, string>>({});
+  const [showCompleted, setShowCompleted] = useState(false);
+  const [visibleOrders, setVisibleOrders] = useState<Record<number, Order>>(orders);
+  const [completedOrders, setCompletedOrders] = useState<number>(0);
 
   const toggleTable = () => {
     setShowTable(!showTable);
+  };
+
+  const toggleCompleted = () => {
+    setShowCompleted(!showCompleted);
   };
 
   const generateRowColor = () => {
@@ -46,6 +53,24 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
     };
   }, [orders]);
 
+  useEffect(() => {
+    setCompletedOrders(
+      Object.values(orders).filter(order => order.orderPizzas.every(orderPizza => orderPizza.completedAt)).length);
+  }, [orders]);
+
+  useEffect(() => {
+    if (showCompleted) {
+      setVisibleOrders(orders);
+    } else {
+      setVisibleOrders(Object.values(orders)
+        .filter(order => order.orderPizzas.some(orderPizza => !orderPizza.completedAt))
+        .reduce<Record<number, Order>>((acc, order) => {
+        acc[order.id] = order;
+        return acc;
+      }, {}));
+    }
+  }, [orders, showCompleted]);
+
   return (
     <div className={style.root}>
       <div className={style['orders-header']}>
@@ -53,6 +78,11 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
           {showTable ? <DownArrow /> : <UpArrow />}
         </button>
         <h2>Orders</h2>
+        {showTable && (
+          <button className={style['completed-button']} onClick={toggleCompleted}>
+            {showCompleted ? `Hide Completed ${completedOrders}` : `Show Completed ${completedOrders}`}
+          </button>
+        )}
       </div>
       {showTable && (
         <div className={style.table}>
@@ -63,7 +93,7 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
             <div className={style.columnHeader}>Status</div>
           </div>
           {
-            Object.values(orders).sort((o1, o2) => o2.id - o1.id).map((order) => {
+            Object.values(visibleOrders).sort((o1, o2) => o2.id - o1.id).map((order) => {
               const rowBackgroundColor = orderColors[order.id] ?? generateRowColor();
               if (!orderColors[order.id]) {
                 setOrderColors((prev) => ({
@@ -75,24 +105,23 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
               return (
                 order.orderPizzas?.map((orderPizza) => {
                   return (
-                  <div
-                    key={`${order.id}.${orderPizza.id}`}
-                    className={style.row}
-                    style={{ backgroundColor: rowBackgroundColor }}
-                    onClick={() => onOrderClick(order)}
-                  >
-                    <div>{`${order.id}.${orderPizza.id}`}</div>
-                    <div>{order.diner.name}</div>
-                    <div>{menu.find(p => p.id === orderPizza.recipeId)?.name}</div>
-                    <div>{`${orderPizza.currentStage ?? 'N/A'} (${
-                      elapsedTimes[orderPizza.id] ?? 'N/A'
-                    }s)`}</div>
-                  </div>
+                    <div
+                      key={`${order.id}.${orderPizza.id}`}
+                      className={style.row}
+                      style={{ backgroundColor: rowBackgroundColor }}
+                      onClick={() => onOrderClick(order)}
+                    >
+                      <div>{`${order.id}.${orderPizza.id}`}</div>
+                      <div>{order.diner.name}</div>
+                      <div>{menu.find(p => p.id === orderPizza.recipeId)?.name}</div>
+                      <div>{`${orderPizza.currentStage ?? 'N/A'} (${elapsedTimes[orderPizza.id] ?? 'N/A'
+                        }s)`}</div>
+                    </div>
                   );
                 }));
             })
           }
-        </div>
+          </div>
       )}
     </div>
   );
