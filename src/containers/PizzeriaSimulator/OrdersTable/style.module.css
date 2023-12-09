@@ -10,29 +10,29 @@
   border-radius: 1.25rem;
 }
 
-.table-header {
+.orders-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
 }
 
-.table-header h2 {
+.orders-header h2 {
   flex: 1;
   text-align: center;
 }
 
 .table {
   max-height: 20rem;
-  padding: 0.125rem;
   display: grid;
   width: 100%;
   overflow-y: auto;
+  border-collapse: collapse;
 }
 
 .row {
   display: grid;
-  grid-template-columns: 1fr 2fr 2fr 1fr;
+  grid-template-columns: 1fr 2fr 1.5fr 1.25fr;
   border-bottom: 1px solid #000;
 }
 
@@ -49,4 +49,10 @@
 .columnHeader {
   border-top: 1px solid #000;
   font-weight: bold;
+}
+
+.table-header {
+  position: sticky;
+  top: 0;
+  background-color: var(--table-background-color);
 }

@@ -10,29 +10,29 @@
   border-radius: 1.25rem;
 }
 
-.table-header {
+.cooks-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
 }
 
-.table-header h2 {
+.cooks-header h2 {
   flex: 1;
   text-align: center;
 }
 
 .table {
   max-height: 20rem;
-  padding: 0.125rem;
   display: grid;
   width: 100%;
   overflow-y: auto;
+  border-collapse: collapse;
 }
 
 .row {
   display: grid;
-  grid-template-columns: 2fr 2fr 1.325fr .5fr;
+  grid-template-columns: 2fr 2fr 2.125fr .5fr;
   border-bottom: 1px solid #000;
 }
 
@@ -61,4 +61,10 @@
 .cook-state-button svg{
   width: 50%;
   height: fit-content;
+}
+
+.table-header {
+  position: sticky;
+  top: 0;
+  background-color: var(--table-background-color);
 }

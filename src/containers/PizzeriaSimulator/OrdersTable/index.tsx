@@ -48,7 +48,7 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
 
   return (
     <div className={style.root}>
-      <div className={style['table-header']}>
+      <div className={style['orders-header']}>
         <button onClick={toggleTable}>
           {showTable ? <DownArrow /> : <UpArrow />}
         </button>
@@ -56,7 +56,7 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
       </div>
       {showTable && (
         <div className={style.table}>
-          <div className={style.row}>
+          <div className={`${style.row} ${style['table-header']}`}>
             <div className={style.columnHeader}>#</div>
             <div className={style.columnHeader}>Diner name</div>
             <div className={style.columnHeader}>Item</div>
