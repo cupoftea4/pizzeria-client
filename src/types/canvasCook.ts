@@ -90,7 +90,7 @@ export class CanvasCook {
       ctx.fillText(label, this.x, this.y - cookImage.height / 2 - 10);
       ctx.fillText(this.cookData.specialization ?? 'Not specialized', this.x, this.y - cookImage.height / 2 + 5);
     } else {
-      console.warn(`Image for ${this.cookData.specialization} not loaded yet.`);
+      console.warn(`Image for ${this.currentStage} not loaded yet.`);
     }
   }
 }

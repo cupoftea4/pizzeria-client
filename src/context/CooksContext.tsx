@@ -14,8 +14,8 @@ type KitchenContextType = {
 const KitchenContext = createContext<KitchenContextType | undefined>(undefined);
 
 export const CooksProvider = ({ children }: { children: React.ReactNode }) => {
-  const [cooks, setCooks] = useState<CanvasCook[]>([]); // Initial cooks state
-  const [numberOfCompletedOrders, setNumberOfCompletedOrders] = useState(0); // Initial cooks state
+  const [cooks, setCooks] = useState<CanvasCook[]>([]);
+  const [numberOfCompletedOrders, setNumberOfCompletedOrders] = useState(0);
 
   const updateCook = useCallback((cookId: number, newStage: CookingStage) => {
     setCooks(prevCooks => {
@@ -56,6 +56,7 @@ export const CooksProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useKitchenVisualization = () => {
   const context = useContext(KitchenContext);
   if (context === undefined) {

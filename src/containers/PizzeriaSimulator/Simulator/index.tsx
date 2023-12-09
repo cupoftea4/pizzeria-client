@@ -19,6 +19,9 @@ import { mergeUpdateIntoCook, mergeUpdateIntoOrder } from '@/utils/orders';
 import { arrayToObject } from '@/utils/object';
 import { toast } from 'react-toastify';
 import { useKitchenVisualization } from '@/context/CooksContext';
+import { FunctionQueue } from '@/utils/FunctionQueue';
+
+const functionQueue = new FunctionQueue(1000);
 
 const Simulator = () => {
   const { config, error: configError } = useConfig();
@@ -75,7 +78,7 @@ const Simulator = () => {
         console.error('UPDATE: Can`t find cook', update.cookId, cooks);
         return cooks;
       }
-      notifyCookUpdate(update.cookId, update.currentStage);
+      functionQueue.enqueue(() => notifyCookUpdate(update.cookId, update.currentStage));
       return {
         ...cooks,
         [update.cookId]: mergeUpdateIntoCook(cookToUpdate, update)
