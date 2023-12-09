@@ -28,9 +28,11 @@ const CooksTable = ({
   };
 
   const handleCookStateChange = (cook: Cook) => {
-    if (cook.status === 'BUSY') {
+    if (cook.status !== 'PAUSED') {
       pauseCook(cook.id);
-      toast.info('The cook is paused, but he must first finish the order he is working on');
+      if (cook.orderId !== null) {
+        toast.info('The cook is paused, but he must first finish the order he is working on');
+      }
     } else {
       resumeCook(cook.id);
     }
