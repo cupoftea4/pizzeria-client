@@ -9,6 +9,7 @@ type OwnProps = {
   minimumPizzaTime: number
   pizzaStagesTimeCoeffs?: TimedCookingStageToValue
   menu: PizzaRecipe[]
+  orderPizzaId?: number
   onClose: () => void
 };
 
@@ -23,11 +24,20 @@ const OrderModal = ({
     Packaging: 0.1
   },
   menu,
+  orderPizzaId,
   onClose
 }: OwnProps) => {
-  const [currentPizzaIndex, setCurrentPizzaIndex] = useState(0);
+  const initPizzaIndex = order.orderPizzas.findIndex(pizza => pizza.id === orderPizzaId);
+  const [currentPizzaIndex, setCurrentPizzaIndex] = useState(initPizzaIndex === -1 ? 0 : initPizzaIndex);
   const [cooksOnThisOrder, setCooksOnThisOrder] = useState<Cook[]>([]);
   const [countedTime, setCountedTime] = useState(0);
+
+  useEffect(() => {
+    const pizzaIndex = order.orderPizzas.findIndex(pizza => pizza.id === orderPizzaId);
+    if (pizzaIndex !== -1) {
+      setCurrentPizzaIndex(pizzaIndex);
+    }
+  }, [order.orderPizzas, orderPizzaId]);
 
   const onLeftClick = () => {
     if (currentPizzaIndex > 0) {
@@ -66,10 +76,6 @@ const OrderModal = ({
   useEffect(() => {
     setCooksOnThisOrder(Object.values(cooks).filter(cook => cook.orderId === order.id));
   }, [cooks, order.id]);
-
-  useEffect(() => {
-    setCurrentPizzaIndex(0);
-  }, []);
 
   const updateCountedTime = useCallback(() => {
     const isOrderCompleted = () => {

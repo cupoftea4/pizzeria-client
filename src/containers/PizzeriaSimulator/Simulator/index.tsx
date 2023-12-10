@@ -21,7 +21,7 @@ import { toast } from 'react-toastify';
 import { useKitchenVisualization } from '@/context/CooksContext';
 import { FunctionQueue } from '@/utils/FunctionQueue';
 
-const functionQueue = new FunctionQueue(1000);
+const functionQueue = new FunctionQueue(100);
 
 const Simulator = () => {
   const { config, error: configError } = useConfig();
@@ -78,10 +78,11 @@ const Simulator = () => {
         console.error('UPDATE: Can`t find cook', update.cookId, cooks);
         return cooks;
       }
-      functionQueue.enqueue(() => notifyCookUpdate(update.cookId, update.currentStage));
+      const mergedData = mergeUpdateIntoCook(cookToUpdate, update);
+      functionQueue.enqueue(() => notifyCookUpdate(update.cookId, mergedData, update.currentStage));
       return {
         ...cooks,
-        [update.cookId]: mergeUpdateIntoCook(cookToUpdate, update)
+        [update.cookId]: mergedData
       };
     });
   }, [notifyCompletedOrder, notifyCookUpdate]);
@@ -94,18 +95,21 @@ const Simulator = () => {
         console.error('COOK: Can`t find cook', update.cookId);
         return cooks;
       }
+      const mergedData = { ...updatedCook, status: update.cookStatus };
+      notifyCookUpdate(update.cookId, mergedData);
       return {
         ...cooks,
-        [update.cookId]: { ...updatedCook, status: update.cookStatus }
+        [update.cookId]: mergedData
       };
     });
-  }, []);
+  }, [notifyCookUpdate]);
 
   useNewOrderSubscription(handleNewOrderUpdate);
   useCookingOrderUpdateSubscription(handleCookingOrderUpdate);
   usePausedCookUpdateSubscription(handlePausedCookUpdate);
 
   const [currentOrder, setCurrentOrder] = useState<Order>();
+  const [currentOrderPizzaId, setCurrentOrderPizzaId] = useState<number>();
   const [pizzaStagesTimeCoeffs, setPizzaStagesTimeCoeffs] = useState<TimedCookingStageToValue>();
 
   const handleModalClose = () => {
@@ -170,9 +174,14 @@ const Simulator = () => {
     toast.error(configError);
   }, [configError]);
 
+  const showOrderModal = useCallback((orderId: number, orderPizzaId: number | null) => {
+    setCurrentOrderPizzaId(orderPizzaId ?? 0);
+    setCurrentOrder(orders[orderId]);
+  }, [orders]);
+
   return (
       <div className={style.root}>
-        <PizzeriaBackground diners={diners}/>
+        <PizzeriaBackground diners={diners} showModal={showOrderModal}/>
         <OrdersTable orders={orders} menu={menu} onOrderClick={(order) => setCurrentOrder(order)} />
         <CooksTable
           cooks={cooks}
@@ -186,6 +195,7 @@ const Simulator = () => {
             pizzaStagesTimeCoeffs={pizzaStagesTimeCoeffs}
             minimumPizzaTime={minimumPizzaTime}
             menu={menu}
+            orderPizzaId={currentOrderPizzaId}
             onClose={handleModalClose}
           />
         }

@@ -23,6 +23,7 @@ export type CookingOrderUpdateMessage = {
   orderId: number
   orderPizzaId: number
   completedAt: string | null
+  modifiedAt: string
 };
 
 export const useBadRequestSubscription = (callback: (message: BadRequestMessage) => void) => {

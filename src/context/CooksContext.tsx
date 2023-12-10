@@ -5,7 +5,7 @@ import React, { createContext, useState, useContext, useCallback } from 'react';
 type KitchenContextType = {
   cooks: CanvasCook[]
   completedOrdersNumber: number
-  notifyCookUpdate: (cookId: number, newStage: CookingStage) => void
+  notifyCookUpdate: (cookId: number, cookData: Cook, newStage?: CookingStage) => void
   setInitialCooks: (cooks: Record<CookingStage, Cook[]>) => void
   notifyCompletedOrder: () => void
   setInitialCompletedOrders: (numberOfCompletedOrders: number) => void
@@ -17,21 +17,24 @@ export const CooksProvider = ({ children }: { children: React.ReactNode }) => {
   const [cooks, setCooks] = useState<CanvasCook[]>([]);
   const [numberOfCompletedOrders, setNumberOfCompletedOrders] = useState(0);
 
-  const updateCook = useCallback((cookId: number, newStage: CookingStage) => {
+  const updateCook = useCallback((cookId: number, cookData: Cook, newStage?: CookingStage) => {
     setCooks(prevCooks => {
       const updatedCooks = [...prevCooks];
       const cook = updatedCooks.find(cook => cook.cookData.id === cookId);
       if (cook) {
-        cook.moveTo(newStage, prevCooks); // Update the target position based on the new stage
+        if (newStage) {
+          cook.moveTo(newStage, prevCooks); // Update the target position based on the new stage
+        }
+        cook.updateData(cookData);
       }
-      return updatedCooks.sort(sortByStage);
+      return updatedCooks.sort(sortByStageAndCoordinates);
     });
   }, []);
 
   const setInitialCooks = useCallback((cooksPerStage: Record<CookingStage, Cook[]>) => {
     setCooks(Object.entries(cooksPerStage).map(([stage, stageCooks]) =>
       stageCooks.map((cook, index) => new CanvasCook(cook, stage as CookingStage, index))
-    ).flat().sort(sortByStage));
+    ).flat().sort(sortByStageAndCoordinates));
   }, []);
 
   const addCompletedOrder = useCallback(() => {
@@ -65,7 +68,13 @@ export const useKitchenVisualization = () => {
   return context;
 };
 
-function sortByStage(a: CanvasCook, b: CanvasCook) {
+function sortByStageAndCoordinates(a: CanvasCook, b: CanvasCook) {
   const stagePriority = ['Baking', 'Topping', 'Packaging', 'Waiting', 'Completed', 'Dough'];
-  return stagePriority.indexOf(a.currentStage) - stagePriority.indexOf(b.currentStage);
+
+  const stageComparison = stagePriority.indexOf(a.currentStage) - stagePriority.indexOf(b.currentStage);
+  if (stageComparison !== 0) {
+    return stageComparison;
+  }
+
+  return a.y - b.y;
 }

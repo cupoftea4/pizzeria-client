@@ -15,9 +15,10 @@ import {
 
 type OwnProps = {
   diners: Diners
+  showModal: (orderId: number, pizzaOrderId: number | null) => void
 };
 
-const PizzeriaBackground = ({ diners }: OwnProps) => {
+const PizzeriaBackground = ({ diners, showModal }: OwnProps) => {
   const bgCanvasRef = useRef<HTMLCanvasElement>(null);
   const cooksCanvasRef = useRef<HTMLCanvasElement>(null);
   const fgCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -79,6 +80,17 @@ const PizzeriaBackground = ({ diners }: OwnProps) => {
     requestRef.current = requestAnimationFrame(animate);
   }, [cooks]);
 
+  const checkClickOnImage = useCallback((x: number, y: number) => {
+    for (const cook of cooks.toReversed()) {
+      if (cook.isClicked(x, y)) {
+        if (cook.cookData.orderId !== null) {
+          showModal(cook.cookData.orderId, cook.cookData.orderPizzaId);
+        }
+        return;
+      }
+    }
+  }, [cooks, showModal]);
+
   useEffect(() => {
     requestRef.current = requestAnimationFrame(animate);
 
@@ -123,6 +135,28 @@ const PizzeriaBackground = ({ diners }: OwnProps) => {
       window.removeEventListener('resize', startVisualization);
     };
   }, [startVisualization]);
+
+  useEffect(() => {
+    const canvas = completedCanvasRef.current;
+    if (!canvas?.getContext) return;
+
+    const onClick = function(event: MouseEvent) {
+      console.log('click');
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+
+      checkClickOnImage(x, y);
+    };
+
+    console.log('adding listener');
+    canvas.addEventListener('click', onClick);
+
+    return () => {
+      console.log('removing listener');
+      canvas.removeEventListener('click', onClick);
+    };
+  }, [checkClickOnImage]);
 
   return <>
     <canvas ref={bgCanvasRef} className={styles.root} />

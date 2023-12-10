@@ -31,9 +31,9 @@ export const bgScale = 1.1;
 export type Diners = Record<number, Set<number>>;
 
 export const drawPizzaPackages = (ctx: CanvasRenderingContext2D, count: number, img: HTMLImageElement) => {
-  count = Math.min(280, count);
+  const clampedCount = Math.min(280, count);
   let x = PACKAGES_POSITION.x, y = PACKAGES_POSITION.y;
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < clampedCount; i++) {
     y = y - 5;
     if (i % MAX_STACKED_PACKAGES === 0) {
       x -= 40;
@@ -54,7 +54,7 @@ export const drawPizzaPackages = (ctx: CanvasRenderingContext2D, count: number, 
   ctx.font = '25px Arial';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  const packagesWidth = (img.width / 1.5) * (count / MAX_STACKED_PACKAGES);
+  const packagesWidth = (img.width / 1.5) * (clampedCount / MAX_STACKED_PACKAGES);
   ctx.fillText(count.toString(), x + packagesWidth / 2, y + 170);
 };
 
