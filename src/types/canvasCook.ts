@@ -12,7 +12,7 @@ const COOK_POSITIONS: Record<CookingStage, [number, number, CoordinateShiftCoeff
   Waiting: [1000, 350, 0, 0]
 };
 
-const CAT_ID = 1;
+export const CAT_ID = 1;
 
 const cooksImages: Partial<Record<CookingStage, HTMLImageElement>> = {};
 let iceImage: HTMLImageElement, catImageRight: HTMLImageElement, catImageLeft: HTMLImageElement;

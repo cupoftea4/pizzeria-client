@@ -8,6 +8,7 @@ import StopIcon from '@/icons/StopIcon';
 import PlayIcon from '@/icons/PlayIcon';
 import { useCookControl } from '@/hooks/useCookControl';
 import { toast } from 'react-toastify';
+import { CAT_ID } from '@/types/canvasCook';
 
 type OwnProps = {
   cooks: Record<number, Cook>
@@ -28,6 +29,16 @@ const CooksTable = ({
   };
 
   const handleCookStateChange = (cook: Cook) => {
+    if (cook.id === CAT_ID) {
+      toast.error(
+        'The cat is not a cook, he is the boss of the pizzeria!',
+        {
+          autoClose: 6000,
+          icon: '😾'
+        }
+      );
+      return;
+    }
     if (cook.status !== 'PAUSED') {
       pauseCook(cook.id);
       if (cook.orderId !== null) {
@@ -61,7 +72,7 @@ const CooksTable = ({
 
               return (<div key={`${cookId}`} className={style.row}>
                 <div>
-                  {`${cook.id === 1 ? 'A cat' : cook.name} ${cook.specialization ? `(${cook.specialization})` : ''}`}
+                  {`${cook.id === CAT_ID ? 'A cat' : cook.name} ${cook.specialization ? `(${cook.specialization})` : ''}`}
                 </div>
                 {order
                   ? <div>{
