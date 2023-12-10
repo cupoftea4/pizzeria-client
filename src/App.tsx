@@ -21,7 +21,7 @@ const App = () => {
         </WebSocketProvider>
       </CooksProvider>
       <ToastContainer
-        position="top-center" theme="colored" pauseOnFocusLoss={false} autoClose={5000}
+        position="top-center" theme="colored" pauseOnFocusLoss={false} autoClose={5000} limit={1}
       />
     </>
   );

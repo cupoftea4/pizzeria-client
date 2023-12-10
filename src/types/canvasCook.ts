@@ -6,14 +6,19 @@ type CoordinateShiftCoefficient = number;
 const COOK_POSITIONS: Record<CookingStage, [number, number, CoordinateShiftCoefficient, CoordinateShiftCoefficient]> = {
   Baking: [1060, 180, +1, +0.5],
   Dough: [770, 360, +1, +0.6],
-  Packaging: [1170, 400, +1, -0.5],
+  Packaging: [1170, 400, +1, 0],
   Topping: [780, 230, +1, -0.5],
-  Completed: [0, 0, 0, 0],
+  Completed: [1000, 350, 0, 0],
   Waiting: [1000, 350, 0, 0]
 };
 
+const CAT_ID = 1;
+
 const cooksImages: Partial<Record<CookingStage, HTMLImageElement>> = {};
-let iceImage: HTMLImageElement;
+let iceImage: HTMLImageElement, catImageRight: HTMLImageElement, catImageLeft: HTMLImageElement;
+
+const rightStages = ['Baking', 'Packaging'];
+const leftStages = ['Completed', 'Waiting', 'Dough', 'Topping'];
 
 const loadCookImages = async () => {
   const backCook = await loadImage('/images/cook.png');
@@ -28,6 +33,8 @@ const loadCookImages = async () => {
 
   cooksImages.Completed = restingCook;
   cooksImages.Waiting = restingCook;
+  catImageRight = await loadImage('/images/cat-right.png');
+  catImageLeft = await loadImage('/images/cat-left.png');
   iceImage = await loadImage('/images/ice.png');
 };
 
@@ -96,6 +103,11 @@ export class CanvasCook {
 
   draw(ctx: CanvasRenderingContext2D) {
     const cookImage = cooksImages[this.currentStage];
+    if (this.cookData.id === CAT_ID) {
+      handleCatSkin(ctx, this.x, this.y, this.currentStage);
+      return;
+    }
+
     if (cookImage) {
       ctx.drawImage(cookImage, this.x - cookImage.width / 2, this.y - cookImage.height / 2);
 
@@ -103,7 +115,7 @@ export class CanvasCook {
       ctx.font = '14px Arial';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      const label = `${this.cookData.name} (${this.cookData.id})`;
+      const label = `${this.cookData.name} (#${this.cookData.id})`;
 
       ctx.fillText(label, this.x, this.y - cookImage.height / 2 - 10);
       ctx.fillText(this.cookData.specialization ?? 'Not specialized', this.x, this.y - cookImage.height / 2 + 5);
@@ -145,4 +157,28 @@ function findFreePlace(cooks: CanvasCook[], stage: CookingStage): [number, numbe
   }
 
   return [x, y];
+}
+
+function handleCatSkin(ctx: CanvasRenderingContext2D, x: number, y: number, currentStage: CookingStage) {
+  const scale = 0.25;
+
+  const drawCat = (img: HTMLImageElement) => {
+    const imgWidth = img.width * scale;
+    const imgHeight = img.height * scale;
+    ctx.drawImage(img, x - imgWidth / 2, y - imgHeight / 2, imgWidth, imgHeight);
+    ctx.fillStyle = '#000000';
+    ctx.font = '14px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const label = `A cat (#${CAT_ID})`;
+
+    ctx.fillText(label, x, y - img.height / 2 - 10);
+  };
+
+  if (rightStages.includes(currentStage) && catImageRight) {
+    drawCat(catImageRight);
+  }
+  if (leftStages.includes(currentStage) && catImageLeft) {
+    drawCat(catImageLeft);
+  }
 }
