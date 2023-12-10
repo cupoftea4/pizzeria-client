@@ -47,6 +47,7 @@ export type Order = {
     recipeId: number
     currentStage?: CookingStage | null
     currentTopping?: string
+    modifiedAt?: string
     completedAt?: string | null
   }>
   diner: {

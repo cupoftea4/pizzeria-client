@@ -1,123 +1,169 @@
-/* eslint-disable max-statements */
 import { useCallback, useEffect, useRef } from 'react';
 import styles from './style.module.css';
+import { useKitchenVisualization } from '@/context/CooksContext';
+import {
+  type Diners,
+  bgScale,
+  getPackageImage,
+  drawPizzaPackages,
+  getFgImage,
+  drawCashRegisterWithDiners,
+  drawSurface,
+  loadImages,
+  loadImage
+} from '@/utils/canvas';
 
-const SURFACE_POSITION = { x: 564, y: 192 };
-
-const FIRST_REGISTER_POSITION = { x: 460, y: 310 };
-const NEXT_REGISTER_SHIFT_X = 60;
-const NEXT_REGISTER_SHIFT_Y = 35;
-
-const DINER_TO_DINER_SHIFT_X = -30;
-const DINER_TO_DINER_SHIFT_Y = 30;
-
-const DINER_TO_REGISTER_SHIFT_X = DINER_TO_DINER_SHIFT_X * 2;
-const DINER_TO_REGISTER_SHIFT_Y = DINER_TO_DINER_SHIFT_Y * 2;
-
-const loadImage = (src: string) => {
-  return new Promise<HTMLImageElement>((resolve) => {
-    const img = new Image();
-    img.onload = () => resolve(img);
-    img.src = src;
-  });
+type OwnProps = {
+  diners: Diners
+  showModal: (orderId: number, pizzaOrderId: number | null) => void
 };
 
-const drawCashRegister = (ctx: CanvasRenderingContext2D, x: number, y: number, img: HTMLImageElement) => {
-  const scale = 0.25;
-  const imgWidth = img.width * scale;
-  const imgHeight = img.height * scale;
-  ctx.drawImage(img, x, y, imgWidth, imgHeight);
-};
+const PizzeriaBackground = ({ diners, showModal }: OwnProps) => {
+  const bgCanvasRef = useRef<HTMLCanvasElement>(null);
+  const cooksCanvasRef = useRef<HTMLCanvasElement>(null);
+  const fgCanvasRef = useRef<HTMLCanvasElement>(null);
+  const completedCanvasRef = useRef<HTMLCanvasElement>(null);
+  const { cooks, completedOrdersNumber } = useKitchenVisualization();
 
-type Diners = Record<number, number>;
-
-const drawCashRegisterWithDiners = (
-  ctx: CanvasRenderingContext2D,
-  cashRegisterImg: HTMLImageElement,
-  dinerImg: HTMLImageElement,
-  cashRegisterDiners: Diners
-) => {
-  let { x, y } = FIRST_REGISTER_POSITION;
-  for (let i = 0; i < Object.keys(cashRegisterDiners).length; i++) {
-    drawCashRegister(ctx, x, y, cashRegisterImg);
-    const dinersNumber = cashRegisterDiners[i + 1] ?? 0;
-    for (let j = 0; j < dinersNumber; j++) {
-      const dinerX = x + DINER_TO_REGISTER_SHIFT_X + DINER_TO_DINER_SHIFT_X * j;
-      const dinerY = y + DINER_TO_REGISTER_SHIFT_Y + DINER_TO_DINER_SHIFT_Y * j;
-      ctx.drawImage(dinerImg, dinerX, dinerY);
-    }
-    x += NEXT_REGISTER_SHIFT_X;
-    y += NEXT_REGISTER_SHIFT_Y;
-  }
-};
-
-const diners: Diners = {
-  1: 3,
-  2: 4,
-  3: 1,
-  4: 0,
-  5: 2
-};
-
-const PizzeriaBackground = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const requestRef = useRef<number>();
 
   const drawBackground = async () => {
-    const canvas = canvasRef.current;
+    const canvas = bgCanvasRef.current;
     if (canvas?.getContext) {
       const ctx = canvas.getContext('2d');
       if (ctx) {
         const bgImage = await loadImage('/images/kitchen-cut.png');
-        const fgImage = await loadImage('/images/surface.png');
-        const cashRegisterImg = await loadImage('/images/cash-register.png');
-        const dinerImg = await loadImage('/images/diner.png');
-        const cookImg = await loadImage('/images/cook.png');
-        const cook2Img = await loadImage('/images/cook2.png');
-        const cook3Img = await loadImage('/images/cook3.png');
-        const cook4Img = await loadImage('/images/cook4.png');
-
-        const scale = 1.1;
-        const imgWidth = bgImage.width * scale;
-        const imgHeight = bgImage.height * scale;
+        const imgWidth = bgImage.width * bgScale;
+        const imgHeight = bgImage.height * bgScale;
         const offsetY = -150;
         const offsetX = -500;
-
         ctx.drawImage(bgImage, offsetX, offsetY, imgWidth, imgHeight);
-
-        // cooks go here
-        ctx.drawImage(cookImg, 700, 150);
-        ctx.drawImage(cook2Img, 1000, 150);
-        ctx.drawImage(cook3Img, 830, 350);
-        ctx.drawImage(cook4Img, 1200, 250);
-
-        ctx.drawImage(fgImage, SURFACE_POSITION.x, SURFACE_POSITION.y, fgImage.width * scale, fgImage.height * scale);
-
-        drawCashRegisterWithDiners(ctx, cashRegisterImg, dinerImg, diners);
       }
     }
   };
 
-  const resizeCanvas = useCallback(() => {
-    const canvas = canvasRef.current;
+  useEffect(() => {
+    const canvas = completedCanvasRef.current;
+    if (!canvas?.getContext) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    getPackageImage().then(img => {
+      drawPizzaPackages(ctx, completedOrdersNumber, img);
+    });
+  }, [completedOrdersNumber]);
+
+  useEffect(() => {
+    const canvas = fgCanvasRef.current;
+    if (!canvas?.getContext) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    getFgImage().then(() => {
+      drawSurface(ctx);
+      drawCashRegisterWithDiners(ctx, diners);
+    });
+  }, [diners]);
+
+  const animate = useCallback(() => {
+    const canvas = cooksCanvasRef.current;
+    if (canvas?.getContext) {
+      const ctx = canvas.getContext('2d')!;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      cooks.forEach(cook => {
+        cook.updatePosition();
+        cook.draw(ctx);
+      });
+    }
+
+    requestRef.current = requestAnimationFrame(animate);
+  }, [cooks]);
+
+  const checkClickOnImage = useCallback((x: number, y: number) => {
+    for (const cook of cooks.toReversed()) {
+      if (cook.isClicked(x, y)) {
+        if (cook.cookData.orderId !== null) {
+          showModal(cook.cookData.orderId, cook.cookData.orderPizzaId);
+        }
+        return;
+      }
+    }
+  }, [cooks, showModal]);
+
+  useEffect(() => {
+    requestRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (requestRef.current) {
+        cancelAnimationFrame(requestRef.current);
+      }
+    };
+  }, [animate]);
+
+  const startVisualization = useCallback(() => {
+    const canvas = bgCanvasRef.current;
     if (canvas) {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       drawBackground();
     }
+    const cooksCanvas = cooksCanvasRef.current;
+    if (cooksCanvas) {
+      cooksCanvas.width = window.innerWidth;
+      cooksCanvas.height = window.innerHeight;
+    }
+    const fgCanvas = fgCanvasRef.current;
+    if (fgCanvas) {
+      fgCanvas.width = window.innerWidth;
+      fgCanvas.height = window.innerHeight;
+    }
+    const completedCanvas = completedCanvasRef.current;
+    if (completedCanvas) {
+      completedCanvas.width = window.innerWidth;
+      completedCanvas.height = window.innerHeight;
+    }
+    loadImages();
   }, []);
 
   useEffect(() => {
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
+    window.addEventListener('resize', startVisualization);
+    startVisualization();
 
     // Clean up
     return () => {
-      window.removeEventListener('resize', resizeCanvas);
+      window.removeEventListener('resize', startVisualization);
     };
-  }, [resizeCanvas]);
+  }, [startVisualization]);
 
-  return <canvas ref={canvasRef} className={styles.root} />;
+  useEffect(() => {
+    const canvas = completedCanvasRef.current;
+    if (!canvas?.getContext) return;
+
+    const onClick = function(event: MouseEvent) {
+      console.log('click');
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+
+      checkClickOnImage(x, y);
+    };
+
+    console.log('adding listener');
+    canvas.addEventListener('click', onClick);
+
+    return () => {
+      console.log('removing listener');
+      canvas.removeEventListener('click', onClick);
+    };
+  }, [checkClickOnImage]);
+
+  return <>
+    <canvas ref={bgCanvasRef} className={styles.root} />
+    <canvas ref={cooksCanvasRef} className={styles.root} />
+    <canvas ref={fgCanvasRef} className={styles.root} />
+    <canvas ref={completedCanvasRef} className={styles.root} />
+  </>;
 };
 
 export default PizzeriaBackground;
-

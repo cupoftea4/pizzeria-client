@@ -71,6 +71,15 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
     }
   }, [orders, showCompleted]);
 
+  function getLastModifiedTime(order: Order) {
+    const lastModifiedTime = order.orderPizzas.reduce((acc, orderPizza) => {
+      const modifiedAt = orderPizza.modifiedAt ?? order.createdAt;
+      const time = new Date(modifiedAt).getTime();
+      return time > acc ? time : acc;
+    }, 0);
+    return Math.round(lastModifiedTime / 1000);
+  }
+
   return (
     <div className={style.root}>
       <div className={style['orders-header']}>
@@ -93,18 +102,19 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
             <div className={style.columnHeader}>Status</div>
           </div>
           {
-            Object.values(visibleOrders).sort((o1, o2) => o2.id - o1.id).map((order) => {
-              const rowBackgroundColor = orderColors[order.id] ?? generateRowColor();
-              if (!orderColors[order.id]) {
-                setOrderColors((prev) => ({
-                  ...prev,
-                  [order.id]: rowBackgroundColor
-                }));
-              }
+            Object.values(visibleOrders).sort((o1, o2) => getLastModifiedTime(o2) - getLastModifiedTime(o1))
+              .map((order) => {
+                const rowBackgroundColor = orderColors[order.id] ?? generateRowColor();
+                if (!orderColors[order.id]) {
+                  setOrderColors((prev) => ({
+                    ...prev,
+                    [order.id]: rowBackgroundColor
+                  }));
+                }
 
-              return (
-                order.orderPizzas?.map((orderPizza) => {
-                  return (
+                return (
+                  order.orderPizzas?.map((orderPizza) => {
+                    return (
                     <div
                       key={`${order.id}.${orderPizza.id}`}
                       className={style.row}
@@ -117,9 +127,9 @@ const OrdersTable = ({ orders, menu, onOrderClick }: OwnProps) => {
                       <div>{`${orderPizza.currentStage ?? 'N/A'} (${elapsedTimes[orderPizza.id] ?? 'N/A'
                         }s)`}</div>
                     </div>
-                  );
-                }));
-            })
+                    );
+                  }));
+              })
           }
           </div>
       )}

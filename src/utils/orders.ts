@@ -11,7 +11,8 @@ export function mergeUpdateIntoOrder(order: Order, update: CookingOrderUpdateMes
           ...p,
           currentStage: update.currentStage,
           completedAt: update.completedAt,
-          currentTopping: update.currentTopping
+          currentTopping: update.currentTopping,
+          modifiedAt: update.modifiedAt
         } satisfies typeof p
     )]
   };

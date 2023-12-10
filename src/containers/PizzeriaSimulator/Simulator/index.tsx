@@ -1,3 +1,4 @@
+/* eslint-disable max-statements */
 import style from './style.module.css';
 import PizzeriaBackground from '../PizzeriaBackground';
 import OrdersTable from '../OrdersTable';
@@ -17,6 +18,10 @@ import {
 import { mergeUpdateIntoCook, mergeUpdateIntoOrder } from '@/utils/orders';
 import { arrayToObject } from '@/utils/object';
 import { toast } from 'react-toastify';
+import { useKitchenVisualization } from '@/context/CooksContext';
+import { FunctionQueue } from '@/utils/FunctionQueue';
+
+const functionQueue = new FunctionQueue(100);
 
 const Simulator = () => {
   const { config, error: configError } = useConfig();
@@ -25,12 +30,26 @@ const Simulator = () => {
   const [cooks, setCooks] = useState<Record<number, Cook>>({});
   const [minimumPizzaTime, setMinimumPizzaTime] = useState(123);
   const [menu, setMenu] = useState<PizzaRecipe[]>([]);
+  const [diners, setDiners] = useState<Record<number, Set<number>>>({}); // cashRegisterId -> dinersNumber
+
+  const {
+    notifyCookUpdate, setInitialCooks, notifyCompletedOrder, setInitialCompletedOrders
+  } = useKitchenVisualization();
 
   const handleNewOrderUpdate = useCallback((order: Order) => {
     console.warn('NEW ORDER', order);
     // BUTT PLUG
     order.orderPizzas.forEach(pizza => { pizza.currentStage = 'Waiting'; });
     setOrders(orders => ({ ...orders, [order.id]: order }));
+
+    const registerId = order.cashRegisterId;
+    console.log(`Adding diner to the cash register ${registerId}}`);
+    setDiners(prevDiners => {
+      return {
+        ...prevDiners,
+        [registerId]: prevDiners[registerId]?.add(order.id) ?? (new Set<number>()).add(order.id)
+      };
+    });
   }, []);
 
   const handleCookingOrderUpdate = useCallback((update: CookingOrderUpdateMessage) => {
@@ -41,6 +60,15 @@ const Simulator = () => {
         console.error('UPDATE: Can`t find order', update.orderId, orders);
         return orders;
       }
+      const registerId = orderToUpdate.cashRegisterId;
+      if (update.currentStage === 'Completed') {
+        console.log(`Removing diner from ${registerId}`);
+        notifyCompletedOrder();
+        setDiners(prevDiners => {
+          prevDiners[registerId]?.delete(update.orderId);
+          return { ...prevDiners, [registerId]: prevDiners[registerId] ?? new Set<number>() };
+        });
+      }
       return { ...orders, [update.orderId]: mergeUpdateIntoOrder(orderToUpdate, update) };
     });
 
@@ -50,12 +78,14 @@ const Simulator = () => {
         console.error('UPDATE: Can`t find cook', update.cookId, cooks);
         return cooks;
       }
+      const mergedData = mergeUpdateIntoCook(cookToUpdate, update);
+      functionQueue.enqueue(() => notifyCookUpdate(update.cookId, mergedData, update.currentStage));
       return {
         ...cooks,
-        [update.cookId]: mergeUpdateIntoCook(cookToUpdate, update)
+        [update.cookId]: mergedData
       };
     });
-  }, []);
+  }, [notifyCompletedOrder, notifyCookUpdate]);
 
   const handlePausedCookUpdate = useCallback((update: PausedCookUpdateMessage) => {
     setCooks(cooks => {
@@ -65,18 +95,21 @@ const Simulator = () => {
         console.error('COOK: Can`t find cook', update.cookId);
         return cooks;
       }
+      const mergedData = { ...updatedCook, status: update.cookStatus };
+      notifyCookUpdate(update.cookId, mergedData);
       return {
         ...cooks,
-        [update.cookId]: { ...updatedCook, status: update.cookStatus }
+        [update.cookId]: mergedData
       };
     });
-  }, []);
+  }, [notifyCookUpdate]);
 
   useNewOrderSubscription(handleNewOrderUpdate);
   useCookingOrderUpdateSubscription(handleCookingOrderUpdate);
   usePausedCookUpdateSubscription(handlePausedCookUpdate);
 
   const [currentOrder, setCurrentOrder] = useState<Order>();
+  const [currentOrderPizzaId, setCurrentOrderPizzaId] = useState<number>();
   const [pizzaStagesTimeCoeffs, setPizzaStagesTimeCoeffs] = useState<TimedCookingStageToValue>();
 
   const handleModalClose = () => {
@@ -92,9 +125,44 @@ const Simulator = () => {
 
   useEffect(() => {
     if (!kitchenState) return;
+    const orders = arrayToObject(kitchenState.orders, 'id');
     setCooks(arrayToObject(kitchenState.cooks, 'id'));
-    setOrders(arrayToObject(kitchenState.orders, 'id'));
-  }, [kitchenState]);
+    setInitialCooks(
+      kitchenState.cooks.reduce<Record<string, Cook[]>>((acc, cook) => {
+        const addToStage = (stage: string) => {
+          if (!acc[stage]) acc[stage] = [];
+          acc[stage]?.push(cook);
+        };
+
+        if (cook.status === 'BUSY') {
+          const stage = orders[cook.orderId!]?.orderPizzas.find(pizza => pizza.id === cook.orderPizzaId)?.currentStage;
+          if (!stage) {
+            console.error('Can`t find stage for cook', cook);
+            return acc;
+          }
+          addToStage(stage);
+          return acc;
+        }
+        addToStage('Waiting');
+        return acc;
+      }, {})
+    );
+    setInitialCompletedOrders(kitchenState.orders.reduce((acc, order) => {
+      return order.orderPizzas.reduce((acc, pizza) => {
+        if (pizza.currentStage === 'Completed') acc++;
+        return acc;
+      }, acc);
+    }, 0));
+    setOrders(orders);
+    setDiners(kitchenState.orders.reduce<Record<number, Set<number>>>((acc, order) => {
+      if (order.orderPizzas.some(pizza => pizza.currentStage !== 'Completed')) {
+        const registerId = order.cashRegisterId;
+        if (!acc[registerId]) acc[registerId] = new Set<number>();
+        acc[registerId]?.add(order.id);
+      }
+      return acc;
+    }, {}));
+  }, [kitchenState, setInitialCompletedOrders, setInitialCooks]);
 
   useEffect(() => {
     if (!kitchenStateError) return;
@@ -106,9 +174,14 @@ const Simulator = () => {
     toast.error(configError);
   }, [configError]);
 
+  const showOrderModal = useCallback((orderId: number, orderPizzaId: number | null) => {
+    setCurrentOrderPizzaId(orderPizzaId ?? 0);
+    setCurrentOrder(orders[orderId]);
+  }, [orders]);
+
   return (
       <div className={style.root}>
-        <PizzeriaBackground/>
+        <PizzeriaBackground diners={diners} showModal={showOrderModal}/>
         <OrdersTable orders={orders} menu={menu} onOrderClick={(order) => setCurrentOrder(order)} />
         <CooksTable
           cooks={cooks}
@@ -122,6 +195,7 @@ const Simulator = () => {
             pizzaStagesTimeCoeffs={pizzaStagesTimeCoeffs}
             minimumPizzaTime={minimumPizzaTime}
             menu={menu}
+            orderPizzaId={currentOrderPizzaId}
             onClose={handleModalClose}
           />
         }
