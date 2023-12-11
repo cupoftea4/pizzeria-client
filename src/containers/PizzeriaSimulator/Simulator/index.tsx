@@ -224,6 +224,7 @@ const Simulator = () => {
         <EndingModal
           orders={Object.values(orders)}
           menu={menu}
+          minimumPizzaTime={minimumPizzaTime}
         />
       }
     </div>
