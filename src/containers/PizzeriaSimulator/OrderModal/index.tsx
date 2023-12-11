@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import style from './style.module.css';
 import OrderItem from '@/containers/PizzeriaSimulator/OrderItem';
 import type { Cook, Order, PizzaRecipe, TimedCookingStageToValue } from '@/types/types';
-import { CAT_ID } from '@/types/canvasCook';
+import { CAT_ID } from '../Simulator';
 
 type OwnProps = {
   cooks: Record<number, Cook>

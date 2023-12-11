@@ -8,7 +8,7 @@ import StopIcon from '@/icons/StopIcon';
 import PlayIcon from '@/icons/PlayIcon';
 import { useCookControl } from '@/hooks/useCookControl';
 import { toast } from 'react-toastify';
-import { CAT_ID } from '@/types/canvasCook';
+import { CAT_ID } from '../Simulator';
 
 type OwnProps = {
   cooks: Record<number, Cook>

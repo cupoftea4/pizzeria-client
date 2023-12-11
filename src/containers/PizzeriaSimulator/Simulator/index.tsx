@@ -25,6 +25,8 @@ import EndingModal from '../EndingModal';
 
 const functionQueue = new FunctionQueue(0);
 
+export let CAT_ID = 1;
+
 const Simulator = () => {
   const { config, error: configError } = useConfig();
   const { kitchenState, error: kitchenStateError } = useKitchenState();
@@ -165,6 +167,7 @@ const Simulator = () => {
       }
       return acc;
     }, {}));
+    CAT_ID = kitchenState.cooks[0]?.id ?? 1;
   }, [kitchenState, setInitialCompletedOrders, setInitialCooks]);
 
   useEffect(() => {

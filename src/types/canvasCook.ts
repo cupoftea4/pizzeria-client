@@ -1,5 +1,6 @@
 import { loadImage } from '@/utils/canvas';
 import type { Cook, CookingStage } from './types';
+import { CAT_ID } from '@/containers/PizzeriaSimulator/Simulator';
 
 type CoordinateShiftCoefficient = number;
 
@@ -12,13 +13,13 @@ const COOK_POSITIONS: Record<CookingStage, [number, number, CoordinateShiftCoeff
   Waiting: [1000, 350, 0, 0]
 };
 
-export const CAT_ID = 1;
-
 const cooksImages: Partial<Record<CookingStage, HTMLImageElement>> = {};
-let iceImage: HTMLImageElement, catImageRight: HTMLImageElement, catImageLeft: HTMLImageElement;
+let iceImage: HTMLImageElement, catImageRight: HTMLImageElement,
+  catImageLeft: HTMLImageElement, catImageBack: HTMLImageElement;
 
 const rightStages = ['Baking', 'Packaging'];
-const leftStages = ['Completed', 'Waiting', 'Dough', 'Topping'];
+const leftStages = ['Completed', 'Waiting', 'Dough'];
+const backStages = ['Topping'];
 
 const loadCookImages = async () => {
   const backCook = await loadImage('/images/cook.png');
@@ -35,6 +36,7 @@ const loadCookImages = async () => {
   cooksImages.Waiting = restingCook;
   catImageRight = await loadImage('/images/cat-right.png');
   catImageLeft = await loadImage('/images/cat-left.png');
+  catImageBack = await loadImage('/images/cat-back.png');
   iceImage = await loadImage('/images/ice.png');
 };
 
@@ -160,10 +162,10 @@ function findFreePlace(cooks: CanvasCook[], stage: CookingStage): [number, numbe
 }
 
 function handleCatSkin(ctx: CanvasRenderingContext2D, x: number, y: number, currentStage: CookingStage) {
-  const scale = 0.25;
+  const scale = 0.225;
 
-  const drawCat = (img: HTMLImageElement) => {
-    const imgWidth = img.width * scale;
+  const drawCat = (img: HTMLImageElement, isBack?: boolean) => {
+    const imgWidth = img.width * (scale - (isBack ? 0.05 : 0));
     const imgHeight = img.height * scale;
     ctx.drawImage(img, x - imgWidth / 2, y - imgHeight / 2, imgWidth, imgHeight);
     ctx.fillStyle = '#000000';
@@ -180,5 +182,8 @@ function handleCatSkin(ctx: CanvasRenderingContext2D, x: number, y: number, curr
   }
   if (leftStages.includes(currentStage) && catImageLeft) {
     drawCat(catImageLeft);
+  }
+  if (backStages.includes(currentStage) && catImageBack) {
+    drawCat(catImageBack, true);
   }
 }
