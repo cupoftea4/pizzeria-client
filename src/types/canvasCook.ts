@@ -63,8 +63,18 @@ export class CanvasCook {
     this.currentStage = currentStage;
 
     const [x, y, dx, dy] = COOK_POSITIONS[currentStage];
-    this.targetX = x + dx * stageCooksCount * 50;
-    this.targetY = y + dy * stageCooksCount * 50;
+    if (stageCooksCount > 6) {
+      if (stageCooksCount > 11) {
+        [this.targetX, this.targetY] = [x, y];
+      } else {
+        [this.targetX, this.targetY] = [
+          x + (25 * dx) + dx * (stageCooksCount - 6) * 50,
+          y + (25 * dy) + dy * (stageCooksCount - 6) * 50
+        ];
+      }
+    } else {
+      [this.targetX, this.targetY] = [x + dx * stageCooksCount * 50, y + dy * stageCooksCount * 50];
+    }
 
     this.moving = false;
 
