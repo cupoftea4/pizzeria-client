@@ -23,7 +23,7 @@ import { FunctionQueue } from '@/utils/FunctionQueue';
 import type { HttpError } from '@/utils/httpClient';
 import EndingModal from '../EndingModal';
 
-const functionQueue = new FunctionQueue(100);
+const functionQueue = new FunctionQueue(0);
 
 const Simulator = () => {
   const { config, error: configError } = useConfig();

@@ -31,9 +31,13 @@ export const CooksProvider = ({ children }: { children: React.ReactNode }) => {
     });
   }, []);
 
+  const sortCooks = () => {
+    setCooks(prevCooks => [...prevCooks].sort(sortByStageAndCoordinates));
+  };
+
   const setInitialCooks = useCallback((cooksPerStage: Record<CookingStage, Cook[]>) => {
     setCooks(Object.entries(cooksPerStage).map(([stage, stageCooks]) =>
-      stageCooks.map((cook, index) => new CanvasCook(cook, stage as CookingStage, index))
+      stageCooks.map((cook, index) => new CanvasCook(cook, stage as CookingStage, index, sortCooks))
     ).flat().sort(sortByStageAndCoordinates));
   }, []);
 
@@ -69,7 +73,7 @@ export const useKitchenVisualization = () => {
 };
 
 function sortByStageAndCoordinates(a: CanvasCook, b: CanvasCook) {
-  const stagePriority = ['Baking', 'Topping', 'Packaging', 'Waiting', 'Completed', 'Dough'];
+  const stagePriority = ['Topping', 'Baking', 'Packaging', 'Waiting', 'Completed', 'Dough'];
 
   const stageComparison = stagePriority.indexOf(a.currentStage) - stagePriority.indexOf(b.currentStage);
   if (stageComparison !== 0) {

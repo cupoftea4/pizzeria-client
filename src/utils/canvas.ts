@@ -94,7 +94,9 @@ export const drawCashRegisterWithDiners = (
 ) => {
   let { x, y } = FIRST_REGISTER_POSITION;
   ctx.font = '25px Arial';
-  for (let i = 0; i < Object.keys(cashRegisterDiners).length; i++) {
+  const minCashRegister = Math.min(...Object.keys(cashRegisterDiners).map(Number));
+  const maxCashRegister = Math.max(...Object.keys(cashRegisterDiners).map(Number));
+  for (let i = minCashRegister; i < maxCashRegister; i++) {
     drawCashRegister(ctx, x, y, cashRegisterImg);
     const dinersNumber = cashRegisterDiners[i + 1]?.size ?? 0;
     ctx.drawImage(dinerImg, x + DINER_TO_REGISTER_SHIFT_X, y + DINER_TO_REGISTER_SHIFT_Y);
