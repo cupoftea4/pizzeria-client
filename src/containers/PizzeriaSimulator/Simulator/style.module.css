@@ -24,3 +24,15 @@
   height: 100%;
   z-index: 1;
 }
+
+.terminate {
+  position: absolute;
+  z-index: 150;
+  padding: 1.5rem;
+  background-color: var(--table-background-color);
+  border-radius: 1.2rem;
+  color: hsl(93, 12%, 29%);
+  font-weight: 600;
+  bottom: 1rem;
+  left: 1rem;
+}

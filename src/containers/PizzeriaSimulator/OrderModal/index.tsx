@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import style from './style.module.css';
 import OrderItem from '@/containers/PizzeriaSimulator/OrderItem';
 import type { Cook, Order, PizzaRecipe, TimedCookingStageToValue } from '@/types/types';
+import { CAT_ID } from '../Simulator';
 
 type OwnProps = {
   cooks: Record<number, Cook>
@@ -106,6 +107,8 @@ const OrderModal = ({
     return () => clearInterval(interval);
   }, [updateCountedTime]);
 
+  const cookOnPizza = cooksOnThisOrder.find(cook => cook.orderPizzaId === order.orderPizzas[currentPizzaIndex]?.id);
+
   return (
     <div className={style.root} onClick={onClose}>
       <div className={style.modal} onClick={(e) => e.stopPropagation()}>
@@ -122,9 +125,7 @@ const OrderModal = ({
             pizzaId={currentPizzaIndex + 1}
             pizzaCount={order.orderPizzas.length}
             cookName={
-              cooksOnThisOrder.find(
-                cook => cook.orderPizzaId === order.orderPizzas[currentPizzaIndex]?.id
-              )?.name ?? null
+              cookOnPizza?.id === CAT_ID ? 'A cat' : cookOnPizza?.name ?? null
             }
             stage={order.orderPizzas[currentPizzaIndex]?.currentStage ?? 'None'}
             minimumPizzaTime={minimumPizzaTime}

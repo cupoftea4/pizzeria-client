@@ -1,0 +1,29 @@
+.root {
+  background-color: hsla(58, 100%, 94%);
+  border-radius: 1.25rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+}
+
+
+.top-section {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+}
+
+.image-section {
+  max-width: 9rem;
+  width: 100%;
+  aspect-ratio: 1/1;
+  margin-inline: 2rem;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}

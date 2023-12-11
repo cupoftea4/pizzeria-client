@@ -35,7 +35,6 @@ const OrderItem = ({
   return (
     <div className={style.root}>
       <div>
-
         <div className={style['top-section']}>
           <div className={style['text-section']}>
             <p><strong>Item: </strong>{pizza?.name}</p>

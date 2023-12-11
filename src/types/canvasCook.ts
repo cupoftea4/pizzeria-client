@@ -1,5 +1,6 @@
 import { loadImage } from '@/utils/canvas';
 import type { Cook, CookingStage } from './types';
+import { CAT_ID } from '@/containers/PizzeriaSimulator/Simulator';
 
 type CoordinateShiftCoefficient = number;
 
@@ -7,13 +8,18 @@ const COOK_POSITIONS: Record<CookingStage, [number, number, CoordinateShiftCoeff
   Baking: [1060, 180, +1, +0.5],
   Dough: [770, 360, +1, +0.6],
   Packaging: [1170, 400, +1, 0],
-  Topping: [800, 240, +1, -0.5],
-  Completed: [0, 0, 0, 0],
+  Topping: [780, 230, +1, -0.5],
+  Completed: [1000, 350, 0, 0],
   Waiting: [1000, 350, 0, 0]
 };
 
 const cooksImages: Partial<Record<CookingStage, HTMLImageElement>> = {};
-let iceImage: HTMLImageElement;
+let iceImage: HTMLImageElement, catImageRight: HTMLImageElement,
+  catImageLeft: HTMLImageElement, catImageBack: HTMLImageElement;
+
+const rightStages = ['Baking', 'Packaging'];
+const leftStages = ['Completed', 'Waiting', 'Dough'];
+const backStages = ['Topping'];
 
 const loadCookImages = async () => {
   const backCook = await loadImage('/images/cook.png');
@@ -28,6 +34,9 @@ const loadCookImages = async () => {
 
   cooksImages.Completed = restingCook;
   cooksImages.Waiting = restingCook;
+  catImageRight = await loadImage('/images/cat-right.png');
+  catImageLeft = await loadImage('/images/cat-left.png');
+  catImageBack = await loadImage('/images/cat-back.png');
   iceImage = await loadImage('/images/ice.png');
 };
 
@@ -42,11 +51,13 @@ export class CanvasCook {
   targetY: number;
   moving: boolean;
   isFrozen: boolean;
+  resortCooks: () => void;
 
   constructor(
     cookData: Cook,
     currentStage: CookingStage,
-    stageCooksCount: number
+    stageCooksCount: number,
+    resortCooks: () => void
   ) {
     this.cookData = cookData;
     this.currentStage = currentStage;
@@ -60,6 +71,7 @@ export class CanvasCook {
     this.x = this.targetX;
     this.y = this.targetY;
     this.isFrozen = cookData.status === 'PAUSED';
+    this.resortCooks = resortCooks;
   }
 
   moveTo(stage: CookingStage, cooks: CanvasCook[]) {
@@ -79,6 +91,7 @@ export class CanvasCook {
       this.x += (this.targetX - this.x) > 0 ? step : -step;
       this.y += (this.targetY - this.y) > 0 ? step : -step;
     } else {
+      this.resortCooks();
       this.x = this.targetX;
       this.y = this.targetY;
       this.moving = false;
@@ -92,6 +105,11 @@ export class CanvasCook {
 
   draw(ctx: CanvasRenderingContext2D) {
     const cookImage = cooksImages[this.currentStage];
+    if (this.cookData.id === CAT_ID) {
+      handleCatSkin(ctx, this.x, this.y, this.currentStage);
+      return;
+    }
+
     if (cookImage) {
       ctx.drawImage(cookImage, this.x - cookImage.width / 2, this.y - cookImage.height / 2);
 
@@ -99,7 +117,7 @@ export class CanvasCook {
       ctx.font = '14px Arial';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      const label = `${this.cookData.name} (${this.cookData.id})`;
+      const label = `${this.cookData.name} (#${this.cookData.id})`;
 
       ctx.fillText(label, this.x, this.y - cookImage.height / 2 - 10);
       ctx.fillText(this.cookData.specialization ?? 'Not specialized', this.x, this.y - cookImage.height / 2 + 5);
@@ -123,11 +141,49 @@ export class CanvasCook {
 
 function findFreePlace(cooks: CanvasCook[], stage: CookingStage): [number, number] {
   const [x, y, dx, dy] = COOK_POSITIONS[stage];
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 6; i++) {
     const freePlace = cooks
       .find((cook) =>
         cook.currentStage === stage && cook.targetX === x + dx * i * 50 && cook.targetY === y + dy * i * 50);
     if (!freePlace) return [x + dx * i * 50, y + dy * i * 50];
   }
+
+  for (let i = 0; i < 5; i++) {
+    const freePlace = cooks
+      .find((cook) =>
+        cook.currentStage === stage &&
+        cook.targetX === x + (25 * dx) + dx * i * 50 &&
+        cook.targetY === y + (25 * dy) + dy * i * 50
+      );
+    if (!freePlace) return [x + (25 * dx) + dx * i * 50, y + (25 * dy) + dy * i * 50];
+  }
+
   return [x, y];
+}
+
+function handleCatSkin(ctx: CanvasRenderingContext2D, x: number, y: number, currentStage: CookingStage) {
+  const scale = 0.225;
+
+  const drawCat = (img: HTMLImageElement, isBack?: boolean) => {
+    const imgWidth = img.width * (scale - (isBack ? 0.05 : 0));
+    const imgHeight = img.height * scale;
+    ctx.drawImage(img, x - imgWidth / 2, y - imgHeight / 2, imgWidth, imgHeight);
+    ctx.fillStyle = '#000000';
+    ctx.font = '14px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const label = `A cat (#${CAT_ID})`;
+
+    ctx.fillText(label, x, y - img.height / 2 - 10);
+  };
+
+  if (rightStages.includes(currentStage) && catImageRight) {
+    drawCat(catImageRight);
+  }
+  if (leftStages.includes(currentStage) && catImageLeft) {
+    drawCat(catImageLeft);
+  }
+  if (backStages.includes(currentStage) && catImageBack) {
+    drawCat(catImageBack, true);
+  }
 }
