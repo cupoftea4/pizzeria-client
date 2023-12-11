@@ -14,12 +14,14 @@ import {
   usePausedCookUpdateSubscription,
   type CookingOrderUpdateMessage,
   type PausedCookUpdateMessage
-} from '@/hooks/useEventSubscribtion'; // spell issue
+} from '@/hooks/useEventSubscription';
 import { mergeUpdateIntoCook, mergeUpdateIntoOrder } from '@/utils/orders';
 import { arrayToObject } from '@/utils/object';
 import { toast } from 'react-toastify';
 import { useKitchenVisualization } from '@/context/CooksContext';
 import { FunctionQueue } from '@/utils/FunctionQueue';
+import type { HttpError } from '@/utils/httpClient';
+import EndingModal from '../EndingModal';
 
 const functionQueue = new FunctionQueue(100);
 
@@ -31,6 +33,7 @@ const Simulator = () => {
   const [minimumPizzaTime, setMinimumPizzaTime] = useState(123);
   const [menu, setMenu] = useState<PizzaRecipe[]>([]);
   const [diners, setDiners] = useState<Record<number, Set<number>>>({}); // cashRegisterId -> dinersNumber
+  const [showTerminateSimulationModal, setShowTerminateSimulationModal] = useState(false);
 
   const {
     notifyCookUpdate, setInitialCooks, notifyCompletedOrder, setInitialCompletedOrders
@@ -179,27 +182,51 @@ const Simulator = () => {
     setCurrentOrder(orders[orderId]);
   }, [orders]);
 
+  const handleTerminate = () => {
+    try {
+      fetch('http://localhost:8080/simulation/terminate', {
+        method: 'POST'
+      });
+      setShowTerminateSimulationModal(true);
+    } catch (err) {
+      toast.error((err as HttpError).message);
+    }
+  };
+
   return (
-      <div className={style.root}>
-        <PizzeriaBackground diners={diners} showModal={showOrderModal}/>
-        <OrdersTable orders={orders} menu={menu} onOrderClick={(order) => setCurrentOrder(order)} />
-        <CooksTable
+    <div className={style.root}>
+      <PizzeriaBackground diners={diners} showModal={showOrderModal} />
+      <OrdersTable
+        orders={orders}
+        menu={menu}
+        onOrderClick={(order) => setCurrentOrder(order)}
+      />
+      <button className={style.terminate} onClick={handleTerminate} >
+        Terminate simulation
+      </button>
+      <CooksTable
+        cooks={cooks}
+        orders={orders}
+        menu={menu}
+      />
+      {currentOrder &&
+        <OrderModal
           cooks={cooks}
-          orders={orders}
+          order={currentOrder}
+          pizzaStagesTimeCoeffs={pizzaStagesTimeCoeffs}
+          minimumPizzaTime={minimumPizzaTime}
+          menu={menu}
+          orderPizzaId={currentOrderPizzaId}
+          onClose={handleModalClose}
+        />
+      }
+      {showTerminateSimulationModal &&
+        <EndingModal
+          orders={Object.values(orders)}
           menu={menu}
         />
-        { currentOrder &&
-          <OrderModal
-            cooks={cooks}
-            order={currentOrder}
-            pizzaStagesTimeCoeffs={pizzaStagesTimeCoeffs}
-            minimumPizzaTime={minimumPizzaTime}
-            menu={menu}
-            orderPizzaId={currentOrderPizzaId}
-            onClose={handleModalClose}
-          />
-        }
-      </div>
+      }
+    </div>
   );
 };
 

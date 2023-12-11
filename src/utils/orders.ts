@@ -1,4 +1,4 @@
-import type { CookingOrderUpdateMessage } from '@/hooks/useEventSubscribtion';
+import type { CookingOrderUpdateMessage } from '@/hooks/useEventSubscription';
 import type { Cook, Order } from '@/types/types';
 
 export function mergeUpdateIntoOrder(order: Order, update: CookingOrderUpdateMessage): Order {
