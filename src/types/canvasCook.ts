@@ -6,8 +6,8 @@ type CoordinateShiftCoefficient = number;
 const COOK_POSITIONS: Record<CookingStage, [number, number, CoordinateShiftCoefficient, CoordinateShiftCoefficient]> = {
   Baking: [1060, 180, +1, +0.5],
   Dough: [770, 360, +1, +0.6],
-  Packaging: [1170, 400, +1, 0],
-  Topping: [800, 240, +1, -0.5],
+  Packaging: [1170, 400, +1, -0.5],
+  Topping: [780, 230, +1, -0.5],
   Completed: [0, 0, 0, 0],
   Waiting: [1000, 350, 0, 0]
 };
@@ -42,11 +42,13 @@ export class CanvasCook {
   targetY: number;
   moving: boolean;
   isFrozen: boolean;
+  resortCooks: () => void;
 
   constructor(
     cookData: Cook,
     currentStage: CookingStage,
-    stageCooksCount: number
+    stageCooksCount: number,
+    resortCooks: () => void
   ) {
     this.cookData = cookData;
     this.currentStage = currentStage;
@@ -60,6 +62,7 @@ export class CanvasCook {
     this.x = this.targetX;
     this.y = this.targetY;
     this.isFrozen = cookData.status === 'PAUSED';
+    this.resortCooks = resortCooks;
   }
 
   moveTo(stage: CookingStage, cooks: CanvasCook[]) {
@@ -79,6 +82,7 @@ export class CanvasCook {
       this.x += (this.targetX - this.x) > 0 ? step : -step;
       this.y += (this.targetY - this.y) > 0 ? step : -step;
     } else {
+      this.resortCooks();
       this.x = this.targetX;
       this.y = this.targetY;
       this.moving = false;
@@ -123,11 +127,22 @@ export class CanvasCook {
 
 function findFreePlace(cooks: CanvasCook[], stage: CookingStage): [number, number] {
   const [x, y, dx, dy] = COOK_POSITIONS[stage];
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 6; i++) {
     const freePlace = cooks
       .find((cook) =>
         cook.currentStage === stage && cook.targetX === x + dx * i * 50 && cook.targetY === y + dy * i * 50);
     if (!freePlace) return [x + dx * i * 50, y + dy * i * 50];
   }
+
+  for (let i = 0; i < 5; i++) {
+    const freePlace = cooks
+      .find((cook) =>
+        cook.currentStage === stage &&
+        cook.targetX === x + (25 * dx) + dx * i * 50 &&
+        cook.targetY === y + (25 * dy) + dy * i * 50
+      );
+    if (!freePlace) return [x + (25 * dx) + dx * i * 50, y + (25 * dy) + dy * i * 50];
+  }
+
   return [x, y];
 }
